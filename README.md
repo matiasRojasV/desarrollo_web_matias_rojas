@@ -2,7 +2,7 @@
 
 ## Estructura del proyecto
 
-Este prototipo fue desarrollado con HTML5, CSS3 y JavaScript, sin backend ni base de datos.
+Este proyecto fue desarrollado con HTML5, CSS3 y JavaScript, sin backend ni base de datos.
 
 - `html/index.html`: listado de avistamientos con filtro, ordenamiento y paginacion.
 - `html/login.html`: formulario de registro de voluntarios.
@@ -28,7 +28,7 @@ Las reglas de validacion se implementaron en JavaScript, por ejemplo:
 - Registro: nombre minimo, formato de correo, formato de celular chileno, region y comuna obligatorias.
 - Avistamiento: tipo, nombre y lugar obligatorios, fecha/hora no futura, limite de antiguedad y archivo multimedia obligatorio.
 
-## 3) Sesion local sin backend (Web Storage)
+## 3) Sesion local (Web Storage)
 Como la tarea es un prototipo estatico, la cuenta/sesion se simula en `localStorage`:
 
 - Al registrarse correctamente, se guardan:
