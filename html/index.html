@@ -4,7 +4,8 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Avistamiento de Aves en Chile - Inicio</title>
-        <link rel="stylesheet" href="../css/styles.css">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+
     </head>
 
     <body>
@@ -16,9 +17,9 @@
             <h1>Unión de Ornitólogos de Chile</h1>
             <nav>
                 <ul>
-                    <li><a href="index.html">Inicio</a></li>
-                    <li><a href="avistamiento.html">Informar Avistamiento</a></li>
-                    <li><a href="dashboard.html">Métricas</a></li>
+                    <li><a href="{{ url_for('index') }}">Inicio</a></li>
+                    <li><a href="{{ url_for('avistamiento') }}">Informar Avistamiento</a></li>
+                    <li><a href="{{ url_for('dashboard') }}">Métricas</a></li>
                 </ul>
             </nav>
         </header>
@@ -118,7 +119,7 @@
             </nav>
 
         </main>
-        <script src="../js/indexFilter.js"></script>
-        <script src="../js/authHeader.js"></script>
+        <script src="{{ url_for('static', filename='js/indexFilter.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/authHeader.js') }}"></script>
     </body>
 </html>
