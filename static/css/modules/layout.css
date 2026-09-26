@@ -1,0 +1,107 @@
+/* Layout general: header, navegacion y contenedor principal */
+header {
+    width: 100%;
+    background-color: var(--card-bg);
+    padding: 1.5rem 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    text-align: center;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+#auth-container {
+    position: absolute;
+    top: 1.5rem;
+    right: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.auth-link {
+    text-decoration: none;
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: color 0.3s ease;
+}
+
+.auth-link:hover {
+    color: var(--accent);
+}
+
+.user-welcome {
+    font-size: 0.9rem;
+    color: var(--text-main);
+}
+
+.btn-logout {
+    background-color: transparent;
+    border: 1px solid var(--error);
+    color: var(--error);
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-logout:hover {
+    background-color: var(--error);
+    color: #ffffff;
+}
+
+header h1 {
+    font-size: 1.8rem;
+    color: var(--primary);
+    margin-bottom: 1rem;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+nav a {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-weight: 500;
+    transition: color 0.3s ease;
+    padding: 0.5rem;
+}
+
+nav a:hover {
+    color: var(--accent);
+}
+
+main {
+    width: 100%;
+    max-width: 800px;
+    background-color: var(--card-bg);
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    margin-bottom: 3rem;
+}
+
+main h2 {
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 0.5rem;
+}
+
+main > p {
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+}
+
+@media (max-width: 600px) {
+    main {
+        padding: 1.5rem;
+        margin: 1rem;
+    }
+}
