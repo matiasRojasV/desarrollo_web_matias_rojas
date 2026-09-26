@@ -5,13 +5,12 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Avistamiento de Aves en Chile - Inicio</title>
         <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-
     </head>
 
     <body>
         <header>
             <div id="auth-container">
-                <a href="login.html" class="auth-link">Registro / Login</a>
+                <a href="{{ url_for('login') }}" class="auth-link">Registro / Login</a>
             </div>
 
             <h1>Unión de Ornitólogos de Chile</h1>
@@ -54,61 +53,12 @@
 
             <!-- Contenedor para Avistamientos -->
             <div class="contenedor-scroll">
-                <div class="lista-avistamientos">    
-                    <article class="tarjeta-ave">
-                        <img src="https://static.wikia.nocookie.net/reinoanimalia/images/d/d1/Andean_condor_by_Alamy.jpg/revision/latest/scale-to-width-down/1000?cb=20250902201815&path-prefix=es" alt="Cóndor Andino">
-                        <div class="info-ave">
-                            <h3>Cóndor Andino</h3>
-                            <p><strong>Tipo:</strong> Ave de Rapiña</p>
-                            <p><strong>Lugar:</strong> Cajón del Maipo, RM</p>
-                            <p><strong>Fecha y Hora:</strong> 18/08/2026 - 11:30 hrs</p>
-                            <p><strong>Voluntario:</strong> Camila Silva</p>
-                        </div>
-                    </article>
-
-                    <article class="tarjeta-ave">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSns3m3j156Jd_MwBKqq2nT_YREYBjpVBRJvqEONtyl9A&s" alt="Pingüino de Humboldt">
-                        <div class="info-ave">
-                            <h3>Pingüino de Humboldt</h3>
-                            <p><strong>Tipo:</strong> Ave Marina</p>
-                            <p><strong>Lugar:</strong> Isla Cachagua, Valparaíso</p>
-                            <p><strong>Fecha y Hora:</strong> 15/08/2026 - 16:45 hrs</p>
-                            <p><strong>Voluntario:</strong> Juan Pérez</p>
-                        </div>
-                    </article>
-
-                    <article class="tarjeta-ave">
-                        <img src="https://avesenchile.cl/wp-content/uploads/2022/02/loica-macho-001.jpg" alt="Loica">
-                        <div class="info-ave">
-                            <h3>Loica</h3>
-                            <p><strong>Tipo:</strong> Ave Terrestre</p>
-                            <p><strong>Lugar:</strong> Parque O'Higgins, RM</p>
-                            <p><strong>Fecha y Hora:</strong> 10/08/2026 - 09:15 hrs</p>
-                            <p><strong>Voluntario:</strong> Roberto Vera</p>
-                        </div>
-                    </article>
-
-                    <article class="tarjeta-ave">
-                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6eFLUa_p5eL7gUFR2_ojhM2uJf0XXQpLATaJVM7Tewlik78-ba6ugyNkG&s=10" alt="Picaflor Chico">
-                        <div class="info-ave">
-                            <h3>Picaflor Chico</h3>
-                            <p><strong>Tipo:</strong> Ave Terrestre</p>
-                            <p><strong>Lugar:</strong> Viña del Mar, Valparaíso</p>
-                            <p><strong>Fecha y Hora:</strong> 02/08/2026 - 14:20 hrs</p>
-                            <p><strong>Voluntario:</strong> Andrea Rojas</p>
-                        </div>
-                    </article>
-                    
-                    <article class="tarjeta-ave">
-                        <img src="https://fvsm.eu/wp-content/uploads/2020/11/Voltor-A-1-250603.jpeg" alt="Buitre Negro">
-                        <div class="info-ave">
-                            <h3>Buitre Negro</h3>
-                            <p><strong>Tipo:</strong> Ave de Rapiña</p>
-                            <p><strong>Lugar:</strong> Lauca , Arica</p>
-                            <p><strong>Fecha y Hora:</strong> 26/08/2026 - 17:51 hrs</p>
-                            <p><strong>Voluntario:</strong> Francisca Caris</p>
-                        </div>
-                    </article>
+                <div class="lista-avistamientos">
+                    {% for avistamiento in ultimos_avistamientos %}
+                        <article class="tarjeta-ave">
+                            <!-- datos que vienen de la BD -->
+                        </article>
+                    {% endfor %}
                 </div>
             </div>
 
