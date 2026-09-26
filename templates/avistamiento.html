@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Avistamiento de Aves</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    </head>
+
+    <body>
+        <header>
+            <div id="auth-container">
+                <a href="{{ url_for('login') }}" class="auth-link">Registro / Login</a>
+            </div>
+
+            <h1>Unión de Ornitólogos de Chile</h1>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('index') }}">Inicio</a></li>
+                    <li><a href="{{ url_for('avistamiento') }}">Informar Avistamiento</a></li>
+                    <li><a href="{{ url_for('dashboard') }}">Métricas</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <h2>Formulario de Avistamiento de aves</h2>
+            <p>Los campos marcados con (*) son obligatorios.</p>
+
+            <!-- Contenedor para mostrar los errores de validacion -->
+            <div id="mensajes-error" role="alert"></div>
+
+            <form id="form-avistamiento" action="{{ url_for('avistamiento') }}" method="post" enctype="multipart/form-data">
+                <fieldset>
+                    <legend>Información</legend>
+                    <p>
+                        <label for="nombre-ave">Nombre Del Ave (*):</label>
+                        <input type="text" id="nombre-ave" name="nombre-ave">
+                    </p>
+                    <p>
+                        <label for="tipo-ave">Tipo de Ave (*):</label>
+                        <select id="tipo-ave" name="tipo-ave">
+                            <option value=""> Seleccione un tipo </option>
+                            <option value="rapina">Rapiña </option>
+                            <option value="terrestre">Terrestre </option>
+                            <option value="acuatica">Acuática </option>
+                        </select>
+                    </p>
+                    <p>
+                        <label for="lugar">Lugar del Avistamiento (*):</label>
+                        <input type="text" id="lugar" name="lugar" placeholder="Ej: Parque Nacional La Campana">
+                    </p>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Fecha y Hora del Avistamiento</legend>
+                    <p>
+                        <label for="fecha">Fecha (*):</label>
+                        <input type="date" id="fecha" name="fecha">
+                    </p>
+                    <p>
+                        <label for="hora">Hora (*):</label>
+                        <input type="time" id="hora" name="hora">
+                    </p>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Registro Visual</legend>
+                    <p>
+                        <label for="multimedia">Foto o Vídeo del Avistamiento (*):</label>
+                        <input type="file" id="multimedia" name="multimedia" accept="image/*,video/*">
+                    </p>
+                </fieldset>
+
+                <button type="submit">Registrar Avistamiento</button>
+            </form>
+        </main>
+
+        <script src="{{ url_for('static', filename='js/avistamientoVal.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/authHeader.js') }}"></script>
+    </body>
+</html>
