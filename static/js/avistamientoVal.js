@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
         alert('Acceso Restringido\n\nDebes estar registrado como voluntario para ingresar un avistamiento. Serás redirigido al formulario de registro.');
         
         // Redirección inmediata a la página de login / registro
-        window.location.href = 'login.html';
+        window.location.href = '/login';
         return;
     }
 
@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
             formAvistamiento.reset();
 
             // Redirigir a la página de avistamientos
-            window.location.href = 'index.html';
+            window.location.href = '/';
         }
     });
 });

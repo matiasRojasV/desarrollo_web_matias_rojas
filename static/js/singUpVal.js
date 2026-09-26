@@ -4,39 +4,37 @@ document.addEventListener('DOMContentLoaded', async () => {
     const form = document.getElementById('form-voluntario');
     const contenedorErrores = document.getElementById('mensajes-error');
 
-    let RegionesYcomunas = { regiones: [] };
-
     // Evento para actualizar el selector de Comunas
-    regionSelect.addEventListener('change', () => {
-        const nombreRegion = regionSelect.value;
+    regionSelect.addEventListener('change', async () => {
+        const regionId = regionSelect.value;
         
         // Limpiar select de comuna
         comunaSelect.innerHTML = '<option value=""> Seleccione una comuna </option>';
+        comunaSelect.disabled = true;
 
-        if (nombreRegion) {
-            // Buscar el objeto de la región seleccionada
-            const regionEncontrada = RegionesYcomunas.regiones.find(
-                (reg) => reg.NombreRegion === nombreRegion
-            );
+        if (regionId) {
+            try {
+                const response = await fetch(`/get_comunas/${regionId}`);
+                const data = await response.json();
 
-            if (regionEncontrada && regionEncontrada.comunas) {
-                regionEncontrada.comunas.forEach((comuna) => {
-                    const option = document.createElement('option');
-                    option.value = comuna;
-                    option.textContent = comuna;
-                    comunaSelect.appendChild(option);
-                });
-                comunaSelect.disabled = false;
-            } else {
-                comunaSelect.disabled = true;
+                if (data.comunas && data.comunas.length > 0) {
+                    data.comunas.forEach((comuna) => {
+                        const option = document.createElement('option');
+                        option.value = comuna.id;
+                        option.textContent = comuna.nombre; // Mostramos el nombre
+                        comunaSelect.appendChild(option);
+                    });
+                    comunaSelect.disabled = false;
+                }
+            } catch (error) {
+                console.error("Error al cargar las comunas:", error);
             }
-        } else {
-            comunaSelect.disabled = true;
         }
     });
 
     // Validaciones del formulario
     form.addEventListener('submit', (event) => {
+        event.preventDefault();
         contenedorErrores.innerHTML = '';
         const errores = [];
 
@@ -83,16 +81,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
             contenedorErrores.appendChild(ul);
         } else {
+            form.submit();
             // Mensaje de confirmación
             alert(`¡Bienvenido/a ${nombre}! Voluntario registrado e identificado con éxito.`);
-
-            // Resetear formulario
-            form.reset();
-            comunaSelect.disabled = true;
-            comunaSelect.innerHTML = '<option value=""> Seleccione primero una región </option>';
-
-            // Redirigir a la página de principal
-            window.location.href = 'index.html';
         }
     });
 });

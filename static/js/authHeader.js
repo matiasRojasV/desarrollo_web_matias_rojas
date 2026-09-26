@@ -20,10 +20,10 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.removeItem('voluntarioRegistrado');
             localStorage.removeItem('nombreVoluntario');
             alert('Sesión cerrada exitosamente.');
-            window.location.href = '/index.html'; // Redirige al inicio
+            window.location.href = "/";
         });
     } else {
         // Si no está logueado
-        authContainer.innerHTML = `<a href="login.html" class="auth-link">Registro / Login</a>`;
+        authContainer.innerHTML = `<a href="/login">Registro / Login</a>`;
     }
 });
