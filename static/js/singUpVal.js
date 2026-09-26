@@ -37,7 +37,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Validaciones del formulario
     form.addEventListener('submit', (event) => {
-        event.preventDefault();
         contenedorErrores.innerHTML = '';
         const errores = [];
 
@@ -84,10 +83,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
             contenedorErrores.appendChild(ul);
         } else {
-            // Guardar estado en local
-            localStorage.setItem('voluntarioRegistrado', 'true');
-            localStorage.setItem('nombreVoluntario', nombre);
-
             // Mensaje de confirmación
             alert(`¡Bienvenido/a ${nombre}! Voluntario registrado e identificado con éxito.`);
 
