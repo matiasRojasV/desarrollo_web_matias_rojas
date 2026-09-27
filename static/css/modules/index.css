@@ -109,7 +109,7 @@
 .lista-2-columnas {
     display: grid;
     grid-template-columns: repeat(2, 1fr); /* Crea 2 columnas del mismo ancho */
-    gap: 20px; /* Espacio entre las tarjetas */
+    gap: 20px;
     max-width: 1200px;
     margin: 0 auto;
 }
