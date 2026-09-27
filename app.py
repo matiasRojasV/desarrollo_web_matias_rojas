@@ -41,6 +41,7 @@ class Comuna(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(200), nullable=False)
     region_id = db.Column(db.Integer, db.ForeignKey('region.id'), nullable=False)
+
     # Relación para acceder desde una comuna a su región
     region = db.relationship('Region', backref=db.backref('comunas', lazy=True))
 
@@ -78,7 +79,6 @@ class Registro(db.Model):
     avistamiento = db.relationship('Avistamiento', backref=db.backref('registros', lazy=True))
 
 
-
 # RUTAS DE LA APLICACIÓN
 # Portada
 @app.route('/')
@@ -91,14 +91,14 @@ def index():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        # 2.1. Recibir datos del formulario
+        # Recibir datos del formulario
         nombre = request.form.get('nombre', '').strip()
         email = request.form.get('email', '').strip()
         celular = request.form.get('celular', '').strip()
         region_id = request.form.get('region', '').strip()
         comuna_id = request.form.get('comuna', '').strip()
 
-        # 2.2. Validaciones obligatorias en el Servidor
+        # Validaciones obligatorias en el Servidor
         errores = []
 
         if not nombre or len(nombre) < 3:
@@ -119,16 +119,17 @@ def login():
             errores.append("Debe seleccionar una comuna.")
         else:
             # Validar que la comuna exista en la BD
-            comuna_obj = Comuna.query.get(comuna_id)
+            comuna_obj = db.session.get(Comuna, comuna_id)
             if not comuna_obj:
                 errores.append("La comuna seleccionada no es válida.")
 
-        # 2.3. Si hay errores de validación, recargamos con los mensajes
+        # Si hay errores de validación, recargamos con los mensajes
         if errores:
             regiones_db = Region.query.all()
             return render_template('login.html', regiones=regiones_db, errores=errores)
 
-        # 2.4. Guardar voluntario en la Base de Datos según el esquema exacto
+
+        # Guardar voluntario en la Base de Datos según el esquema exacto
         nuevo_voluntario = Voluntario(
             nombre=nombre,
             email=email,
@@ -140,12 +141,14 @@ def login():
         try:
             db.session.add(nuevo_voluntario)
             db.session.commit()
-            return redirect(url_for('index'))
+            return render_template('exitoLogin.html', nombre=nuevo_voluntario.nombre)
+            #return redirect(url_for('index'))
         
         except Exception as e:
             db.session.rollback()
             regiones_db = Region.query.all()
             return render_template('login.html', regiones=regiones_db, errores=["Error interno al guardar en la base de datos."])
+
 
     # Si la petición es GET
     regiones_db = Region.query.all()
@@ -167,7 +170,7 @@ def get_comunas(region_id):
 @app.route('/avistamiento', methods=['GET', 'POST'])
 def avistamiento():
     if request.method == 'POST':
-        # 1. Obtener campos del formulario
+        # Obtener campos del formulario
         ave_id = request.form.get('ave_id') 
         lugar = request.form.get('lugar', '').strip()
         descripcion = request.form.get('descripcion', '').strip()
@@ -175,7 +178,7 @@ def avistamiento():
         hora = request.form.get('hora', '').strip()
         archivo = request.files.get('multimedia')
 
-        # 2. Validaciones en el Servidor
+        # Validaciones en el Servidor
         errores = []
 
         if not ave_id:
@@ -238,18 +241,26 @@ def avistamiento():
     return render_template('avistamiento.html', aves=aves_db)  
 
 
+@app.route('/avistamiento/<int:id>')
+def detalleAvistamiento(id):
+    # Obtiene el avistamiento o error 404 si no existe
+    avistamiento = Avistamiento.query.get_or_404(id)
+    return render_template('detalleAvistamiento.html', avistamiento=avistamiento)
+
+
 # Lista de avistamientos
 @app.route('/listAvistamientos')
 def listAvistamientos():
-    # Obtener todos los avistamientos ordenados por fecha descendente
-    todos_los_avistamientos = Avistamiento.query.order_by(Avistamiento.fecha_hora.desc()).all()
-    return render_template('listAvistamientos.html', avistamientos=todos_los_avistamientos)
+    page = request.args.get('page', 1, type=int)
+    avistamientos = Avistamiento.query.order_by(Avistamiento.fecha_hora.desc()).paginate(page=page, per_page=4)
+    return render_template('listAvistamientos.html', avistamientos=avistamientos)
 
 
-# 4. Métricas (Dashboard)
+# Dashboard
 @app.route('/dashboard')
 def dashboard():
     return render_template('dashboard.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
