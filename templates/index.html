@@ -44,7 +44,7 @@
                                 {% endif %}
                                 
                                 <div class="info-ave">
-                                    <h3>{{ avistamiento.ave.nombre }}</h3>
+                                    <h3><a href="{{ url_for('detalleAvistamiento', id=avistamiento.id) }}">{{ avistamiento.ave.nombre }}</a></h3>
                                     <p><strong>Lugar:</strong> {{ avistamiento.lugar }}</p>
                                     <p><strong>Fecha y Hora:</strong> {{ avistamiento.fecha_hora.strftime('%d/%m/%Y - %H:%M') }} hrs</p>
                                     <p><strong>Voluntario:</strong> {{ avistamiento.voluntario.nombre }}</p>
