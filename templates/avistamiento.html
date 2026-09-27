@@ -28,27 +28,35 @@
             <p>Los campos marcados con (*) son obligatorios.</p>
 
             <!-- Contenedor para mostrar los errores de validacion -->
-            <div id="mensajes-error" role="alert"></div>
+            <div id="mensajes-error" role="alert">
+                {% if errores %}
+                    <ul style="color: red;">
+                        {% for error in errores %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
 
             <form id="form-avistamiento" action="{{ url_for('avistamiento') }}" method="post" enctype="multipart/form-data">
                 <fieldset>
                     <legend>Información</legend>
                     <p>
-                        <label for="nombre-ave">Nombre Del Ave (*):</label>
-                        <input type="text" id="nombre-ave" name="nombre-ave">
-                    </p>
-                    <p>
-                        <label for="tipo-ave">Tipo de Ave (*):</label>
-                        <select id="tipo-ave" name="tipo-ave">
-                            <option value=""> Seleccione un tipo </option>
-                            <option value="rapina">Rapiña </option>
-                            <option value="terrestre">Terrestre </option>
-                            <option value="acuatica">Acuática </option>
+                        <label for="ave-id">Nombre Del Ave (*):</label>
+                        <select id="ave_id" name="ave_id">
+                            <option value=""> Seleccione un ave </option>
+                            {% for ave in aves %}
+                                <option value="{{ ave.id }}">{{ ave.nombre }}</option>
+                            {% endfor %}
                         </select>
                     </p>
                     <p>
                         <label for="lugar">Lugar del Avistamiento (*):</label>
                         <input type="text" id="lugar" name="lugar" placeholder="Ej: Parque Nacional La Campana">
+                    </p>
+                    <p>
+                        <label for="descripcion">Descripción / Observaciones:</label>
+                        <textarea id="descripcion" name="descripcion" rows="3" placeholder="Detalles opcionales del avistamiento"></textarea>
                     </p>
                 </fieldset>
 
