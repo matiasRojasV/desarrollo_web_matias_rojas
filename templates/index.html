@@ -17,6 +17,7 @@
             <nav>
                 <ul>
                     <li><a href="{{ url_for('index') }}">Inicio</a></li>
+                    <li><a href="{{ url_for('listAvistamientos') }}">Ver Avistamientos</a></li>
                     <li><a href="{{ url_for('avistamiento') }}">Informar Avistamiento</a></li>
                     <li><a href="{{ url_for('dashboard') }}">Métricas</a></li>
                 </ul>
@@ -24,50 +25,43 @@
         </header>
 
         <main>
-            <h2>Registro Nacional de Avistamientos</h2>
-            <p>Consulta los avistamientos reportados por voluntarios en todo el país.</p>
-
-            <!-- Contenedor para los 2 últimos avistamientos resumidos -->
-            <div class="contenedor-scroll">
-            <h3>Últimos Avistamientos Registrados</h3>
-            <div class="lista-avistamientos">
-                {% if ultimos_avistamientos %}
-                    {% for avistamiento in ultimos_avistamientos %}
-                        <article class="tarjeta-ave">
-                            
-                            <!-- Busca la foto en la tabla 'registro' relacionada -->
-                            {% if avistamiento.registros %}
-                                <img src="{{ url_for('static', filename='uploads/' + avistamiento.registros[0].nombre_archivo) }}" alt="Foto de {{ avistamiento.ave.nombre }}">
-                            {% else %}
-                                <img src="{{ url_for('static', filename='img/placeholder.jpg') }}" alt="Sin imagen">
-                            {% endif %}
-                            
-                            <div class="info-ave">
-                                <h3>{{ avistamiento.ave.nombre }}</h3>
-                                <p><strong>Lugar:</strong> {{ avistamiento.lugar }}</p>
-                                <p><strong>Fecha y Hora:</strong> {{ avistamiento.fecha_hora.strftime('%d/%m/%Y - %H:%M') }} hrs</p>
-                                <p><strong>Voluntario:</strong> {{ avistamiento.voluntario.nombre }}</p>
-                                
-                                <!-- Mostramos la descripción (opcional si es muy larga, la puedes omitir en el resumen) -->
-                                {% if avistamiento.descripcion %}
-                                    <p><em>{{ avistamiento.descripcion }}</em></p>
-                                {% endif %}
-                            </div>
-                        </article>
-                    {% endfor %}
-                {% else %}
-                    <p>Aún no hay avistamientos registrados en el sistema.</p>
-                {% endif %}
+            <div style="text-align: center;">
+                <h2>Bienvenido Al Registro Nacional de Avistamientos</h2>
+                <p>Ultimos avistamientos reportados por voluntarios en todo el país.</p>
             </div>
-        </div>
+            
 
-            <nav class="paginacion" aria-label="Paginacion de avistamientos">
-                <button type="button" id="btn-anterior" class="btn-paginacion">Anterior</button>
-                <p id="paginacion-info" class="paginacion-info">Pagina 1 de 1</p>
-                <button type="button" id="btn-siguiente" class="btn-paginacion">Siguiente</button>
-            </nav>
-
+            <!-- Contenedor de los 2 últimos avistamientos -->
+            <div class="contenedor-scroll">
+                <div class="lista-avistamientos">
+                    {% if ultimos_avistamientos %}
+                        {% for avistamiento in ultimos_avistamientos %}
+                            <article class="tarjeta-ave">
+                                {% if avistamiento.registros %}
+                                    <img src="{{ url_for('static', filename='uploads/' + avistamiento.registros[0].nombre_archivo) }}" alt="Foto de {{ avistamiento.ave.nombre }}" width="200">
+                                {% else %}
+                                    <img src="{{ url_for('static', filename='img/placeholder.jpg') }}" alt="Sin imagen" width="200">
+                                {% endif %}
+                                
+                                <div class="info-ave">
+                                    <h3>{{ avistamiento.ave.nombre }}</h3>
+                                    <p><strong>Lugar:</strong> {{ avistamiento.lugar }}</p>
+                                    <p><strong>Fecha y Hora:</strong> {{ avistamiento.fecha_hora.strftime('%d/%m/%Y - %H:%M') }} hrs</p>
+                                    <p><strong>Voluntario:</strong> {{ avistamiento.voluntario.nombre }}</p>
+                                    
+                                    {% if avistamiento.descripcion %}
+                                        <p><em>{{ avistamiento.descripcion }}</em></p>
+                                    {% endif %}
+                                </div>
+                            </article>
+                        {% endfor %}
+                    {% else %}
+                        <p>Aún no hay avistamientos registrados en el sistema.</p>
+                    {% endif %}
+                </div>
+            </div>
         </main>
+
         <script src="{{ url_for('static', filename='js/indexFilter.js') }}"></script>
         <script src="{{ url_for('static', filename='js/authHeader.js') }}"></script>
     </body>
