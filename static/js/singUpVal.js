@@ -81,9 +81,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
             contenedorErrores.appendChild(ul);
         } else {
+            localStorage.setItem('voluntarioRegistrado', 'true');
+            localStorage.setItem('nombreVoluntario', nombre);
             form.submit();
-            // Mensaje de confirmación
-            alert(`¡Bienvenido/a ${nombre}! Voluntario registrado e identificado con éxito.`);
         }
     });
 });
