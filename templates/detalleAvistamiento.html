@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <title>Detalle del Avistamiento</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    </head>
+
+    <body>
+        <header>
+            <div id="auth-container">
+                <a href="{{ url_for('login') }}" class="auth-link">Iniciar Sesión</a>
+            </div>
+
+            <h1>Unión de Ornitólogos de Chile</h1>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('index') }}">Inicio</a></li>
+                    <li><a href="{{ url_for('listAvistamientos') }}">Ver Avistamientos</a></li>
+                    <li><a href="{{ url_for('avistamiento') }}">Informar Avistamiento</a></li>
+                    <li><a href="{{ url_for('dashboard') }}">Métricas</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <h2>Avistamiento: {{ avistamiento.ave.nombre }}</h2>
+            <p><strong>Registrado por:</strong> {{ avistamiento.voluntario.nombre }}</p>
+            <p><strong>Fecha y Hora:</strong> {{ avistamiento.fecha_hora.strftime('%d/%m/%Y - %H:%M') }} hrs</p>
+            <p><strong>Lugar:</strong> {{ avistamiento.lugar }}</p>
+            <p><strong>Descripción:</strong> {{ avistamiento.descripcion or 'Sin descripción adicional.' }}</p>
+
+            <h3>Archivos Multimedia</h3>
+            <div class="multimedia-container">
+                {% for registro in avistamiento.registros %}
+                    <img src="{{ url_for('static', filename='uploads/' + registro.nombre_archivo) }}" alt="Imagen del avistamiento" style="max-width: 50%; border-radius: 8px; margin-bottom: 10px;">
+                {% else %}
+                    <p>No hay imágenes para este avistamiento.</p>
+                {% endfor %}
+            </div>
+            
+            <a href="{{ url_for('listAvistamientos') }}" class="btn-paginacion" style="text-decoration: none;">Volver al listado</a>
+        </main>
+    </body>
+</html>
