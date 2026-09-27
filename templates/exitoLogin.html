@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <title>Registro Exitoso</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    </head>
+
+    <body>
+        <header>
+            <h1>Unión de Ornitólogos de Chile</h1>
+        </header>
+        <main style="text-align: center; max-width: 600px; margin: 40px auto; padding: 20px;">
+            <h2>Registro Completado</h2>
+            <p>Gracias por unirte, <strong>{{ nombre }}</strong>. Tus datos han sido guardados.</p>
+            
+            <div style="margin-top: 30px; display: flex; justify-content: center; gap: 15px;">
+                <a href="{{ url_for('index') }}" class="btn-paginacion" style="text-decoration: none;">Ir al Inicio</a>
+                <a href="{{ url_for('avistamiento') }}" class="btn-paginacion" style="text-decoration: none;">Registrar un Avistamiento</a>
+            </div>
+        </main>
+    </body>
+</html>
