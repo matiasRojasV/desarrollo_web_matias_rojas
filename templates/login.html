@@ -24,7 +24,7 @@
             </nav>
         </header>
 
-        <main>
+        <main class="form">
             <h2>Formulario de Registro de Voluntarios</h2>
             <p>Los campos marcados con (*) son obligatorios.</p>
 
@@ -39,7 +39,7 @@
                 {% endif %}
             </div>
 
-            <form id="form-voluntario" action="{{ url_for('login') }}" method="post">
+            <form id="form-voluntario"  action="{{ url_for('login') }}" method="post">
                 <fieldset>
                     <legend>Información Personal y Contacto</legend>
                     <p>
