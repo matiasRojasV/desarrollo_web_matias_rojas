@@ -79,7 +79,7 @@ nav a:hover {
 
 main {
     width: 100%;
-    max-width: 800px;
+    max-width: 1200px;
     background-color: var(--card-bg);
     padding: 2rem;
     border-radius: 8px;

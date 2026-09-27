@@ -80,14 +80,14 @@ class Registro(db.Model):
 
 
 # RUTAS DE LA APLICACIÓN
-# 1. Portada
+# Portada
 @app.route('/')
 def index():
     ultimos2 = Avistamiento.query.order_by(Avistamiento.id.desc()).limit(2).all()
-    return render_template('index.html', ultimos_avist =ultimos2)
+    return render_template('index.html', ultimos_avistamientos =ultimos2)
 
     
-# 2. Registrar Voluntario
+# Registrar Voluntario
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -140,21 +140,19 @@ def login():
         try:
             db.session.add(nuevo_voluntario)
             db.session.commit()
-            # Redirigir a la portada tras guardar con éxito
             return redirect(url_for('index'))
+        
         except Exception as e:
             db.session.rollback()
             regiones_db = Region.query.all()
             return render_template('login.html', regiones=regiones_db, errores=["Error interno al guardar en la base de datos."])
 
-
-    # Si la petición es GET (cargar la página por primera vez)
+    # Si la petición es GET
     regiones_db = Region.query.all()
-
     return render_template('login.html', regiones=regiones_db)
 
 
-# 3. Obtener comunas de la region
+# Obtener comunas de la region
 @app.route('/get_comunas/<int:region_id>')
 def get_comunas(region_id):
     # Consulta a la base de datos: Comunas donde el region_id coincida
@@ -165,21 +163,21 @@ def get_comunas(region_id):
     return jsonify({'comunas': comunas_json})
 
 
-# 3. Registrar Avistamiento
+# Registrar Avistamiento
 @app.route('/avistamiento', methods=['GET', 'POST'])
 def avistamiento():
     if request.method == 'POST':
         # 1. Obtener campos del formulario
         ave_id = request.form.get('ave_id') 
-        lugar = request.form.get('lugar')
-        fecha = request.form.get('fecha')
-        hora = request.form.get('hora')
+        lugar = request.form.get('lugar', '').strip()
+        descripcion = request.form.get('descripcion', '').strip()
+        fecha = request.form.get('fecha', '').strip()
+        hora = request.form.get('hora', '').strip()
         archivo = request.files.get('multimedia')
 
         # 2. Validaciones en el Servidor
         errores = []
 
-        # CORRECCIÓN 1: Solo verificar que se haya seleccionado un ave (sin len < 2)
         if not ave_id:
             errores.append("Debe seleccionar un ave de la lista.")
 
@@ -194,7 +192,7 @@ def avistamiento():
             try:
                 fecha_hora = datetime.strptime(f"{fecha} {hora}", "%Y-%m-%d %H:%M")
             except ValueError:
-                errores.append("El formato de fecha o hora no es válido.")
+                errores.append("El formato de fecha u hora no es válido.")
 
         if not archivo or archivo.filename == '':
             errores.append("Debe adjuntar una foto o video del avistamiento.")
@@ -203,24 +201,23 @@ def avistamiento():
             aves_db = Ave.query.all()
             return render_template('avistamiento.html', errores=errores, aves=aves_db)
 
-        # CORRECCIÓN 2: Obtener el voluntario actual antes de usarlo
         voluntario_obj = Voluntario.query.order_by(Voluntario.id.desc()).first()
         if not voluntario_obj:
             aves_db = Ave.query.all()
             return render_template('avistamiento.html', errores=["Debe registrar al menos un voluntario antes de reportar un avistamiento."], aves=aves_db)
 
-        # 3. Crear el avistamiento
+        # Crear el avistamiento según las columnas de la BD
         nuevo_avistamiento = Avistamiento(
-            fecha_hora=fecha_hora, # CORRECCIÓN 3: Pasar el objeto datetime
+            fecha_hora=fecha_hora,
             lugar=lugar,
-            descripcion="Avistamiento reportado",
+            descripcion=descripcion,
             ave_id=int(ave_id),
             voluntario_id=voluntario_obj.id
         )
         db.session.add(nuevo_avistamiento)
-        db.session.flush() # Genera el ID del avistamiento para el registro
+        db.session.flush()
 
-        # 4. Guardar el archivo en disco e insertar en la tabla 'registro'
+        # Guardar archivo e insertar registro
         if archivo:
             nombre_seguro = secure_filename(archivo.filename)
             ruta_guardado = os.path.join(app.config['UPLOAD_FOLDER'], nombre_seguro)
@@ -234,13 +231,19 @@ def avistamiento():
             db.session.add(nuevo_registro)
 
         db.session.commit()
-        
-        # Volver a la página de inicio
         return redirect(url_for('index'))
 
-    # Si es GET, enviamos la lista de aves para llenar el <select>
+    # Método GET
     aves_db = Ave.query.all()
-    return render_template('avistamiento.html', aves=aves_db)      
+    return render_template('avistamiento.html', aves=aves_db)  
+
+
+# Lista de avistamientos
+@app.route('/listAvistamientos')
+def listAvistamientos():
+    # Obtener todos los avistamientos ordenados por fecha descendente
+    todos_los_avistamientos = Avistamiento.query.order_by(Avistamiento.fecha_hora.desc()).all()
+    return render_template('listAvistamientos.html', avistamientos=todos_los_avistamientos)
 
 
 # 4. Métricas (Dashboard)

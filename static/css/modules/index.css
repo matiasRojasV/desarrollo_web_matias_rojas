@@ -105,7 +105,16 @@
     margin-bottom: 0.3rem;
 }
 
-@media (max-width: 600px) {
+/* Layout de 2 columnas para el listado de avistamientos */
+.lista-2-columnas {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Crea 2 columnas del mismo ancho */
+    gap: 20px; /* Espacio entre las tarjetas */
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+@media (max-width: 1200px) {
     .tarjeta-ave {
         flex-direction: column;
     }
@@ -123,4 +132,10 @@
     .paginacion {
         flex-wrap: wrap;
     }
+
+    .lista-2-columnas {
+        grid-template-columns: 1fr; 
+    }
 }
+
+

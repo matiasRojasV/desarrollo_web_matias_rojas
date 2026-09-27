@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Listado de Avistamientos - Aves en Chile</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    </head>
+
+    <body>
+        <header>
+            <div id="auth-container">
+                <a href="{{ url_for('login') }}" class="auth-link">Iniciar Sesión</a>
+            </div>
+
+            <h1>Unión de Ornitólogos de Chile</h1>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('index') }}">Inicio</a></li>
+                    <li><a href="{{ url_for('listAvistamientos') }}">Ver Avistamientos</a></li>
+                    <li><a href="{{ url_for('avistamiento') }}">Informar Avistamiento</a></li>
+                    <li><a href="{{ url_for('dashboard') }}">Métricas</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <div style="text-align: center;">
+                <h2>Listado Nacional de Avistamientos</h2>
+                <p>Explora todos los registros aportados por nuestra comunidad.</p>
+            </div>
+
+            <!-- Barra de Ordenamiento -->
+            <div class="filtros-section" style="text-align: center; margin-bottom: 20px;">
+                <form id="form-filtros" onsubmit="event.preventDefault();">
+                    <div class="filtro-grupo" style="display: inline-block;">
+                        <label for="ordenar-por">Ordenar por:</label>
+                        <select id="ordenar-por" name="orden">
+                            <option value="fecha-desc">Fecha (más reciente)</option>
+                            <option value="fecha-asc">Fecha (más antigua)</option>
+                            <option value="lugar">Lugar (A-Z)</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Contenedor de Avistamientos -->
+            <div class="lista-avistamientos lista-2-columnas">
+                {% if avistamientos %}
+                    {% for avistamiento in avistamientos %}
+                        <article class="tarjeta-ave">
+                            {% if avistamiento.registros %}
+                                <img src="{{ url_for('static', filename='uploads/' + avistamiento.registros[0].nombre_archivo) }}" alt="Foto de {{ avistamiento.ave.nombre }}" width="200">
+                            {% else %}
+                                <img src="{{ url_for('static', filename='img/placeholder.jpg') }}" alt="Sin imagen" width="200">
+                            {% endif %}
+                            
+                            <div class="info-ave">
+                                <h3>{{ avistamiento.ave.nombre }}</h3>
+                                <p><strong>Lugar:</strong> {{ avistamiento.lugar }}</p>
+                                <p><strong>Fecha y Hora:</strong> {{ avistamiento.fecha_hora.strftime('%d/%m/%Y - %H:%M') }} hrs</p>
+                                <p><strong>Voluntario:</strong> {{ avistamiento.voluntario.nombre }}</p>
+                                
+                                {% if avistamiento.descripcion %}
+                                    <p><em>{{ avistamiento.descripcion }}</em></p>
+                                {% endif %}
+                            </div>
+                        </article>
+                    {% endfor %}
+                {% else %}
+                    <p>Aún no hay avistamientos registrados en el sistema.</p>
+                {% endif %}
+            </div>
+
+            <!-- Paginacion -->
+            <nav class="paginacion" aria-label="Paginacion de avistamientos" style="text-align: center; margin-top: 20px;">
+                <button type="button" id="btn-anterior" class="btn-paginacion">Anterior</button>
+                <span id="paginacion-info" class="paginacion-info" style="margin: 0 15px;">Página 1 de 1</span>
+                <button type="button" id="btn-siguiente" class="btn-paginacion">Siguiente</button>
+            </nav>
+        </main>
+
+        <script src="{{ url_for('static', filename='js/indexFilter.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/authHeader.js') }}"></script>
+    </body>
+</html>
