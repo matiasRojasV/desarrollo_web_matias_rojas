@@ -10,7 +10,7 @@
     <body>
         <header>
             <div id="auth-container">
-                <a href="{{ url_for('login') }}" class="auth-link">Registro / Login</a>
+                <a href="{{ url_for('login') }}" class="auth-link">Iniciar Sesión</a>
             </div>
 
             <h1>Unión de Ornitólogos de Chile</h1>
@@ -27,40 +27,39 @@
             <h2>Registro Nacional de Avistamientos</h2>
             <p>Consulta los avistamientos reportados por voluntarios en todo el país.</p>
 
-            <!-- Barra de Filtros y Ordenamiento -->
-            <div class="filtros-section">
-                <form id="form-filtros" onsubmit="event.preventDefault();">
-                    <div class="filtro-grupo">
-                        <label for="filtro-tipo">Filtrar por Tipo de Ave:</label>
-                        <select id="filtro-tipo" name="tipo">
-                            <option value=""> Todos los tipos </option>
-                            <option value="rapiña">Aves de Rapiña</option>
-                            <option value="marina">Aves Marinas</option>
-                            <option value="terrestre">Aves Terrestres</option>
-                        </select>
-                    </div>
-
-                    <div class="filtro-grupo">
-                        <label for="ordenar-por">Ordenar por:</label>
-                        <select id="ordenar-por" name="orden">
-                            <option value="fecha-desc">Fecha (más reciente)</option>
-                            <option value="fecha-asc">Fecha (más antigua)</option>
-                            <option value="lugar">Lugar (A-Z)</option>
-                        </select>
-                    </div>
-                </form>
-            </div>
-
-            <!-- Contenedor para Avistamientos -->
+            <!-- Contenedor para los 2 últimos avistamientos resumidos -->
             <div class="contenedor-scroll">
-                <div class="lista-avistamientos">
+            <h3>Últimos Avistamientos Registrados</h3>
+            <div class="lista-avistamientos">
+                {% if ultimos_avistamientos %}
                     {% for avistamiento in ultimos_avistamientos %}
                         <article class="tarjeta-ave">
-                            <!-- datos que vienen de la BD -->
+                            
+                            <!-- Busca la foto en la tabla 'registro' relacionada -->
+                            {% if avistamiento.registros %}
+                                <img src="{{ url_for('static', filename='uploads/' + avistamiento.registros[0].nombre_archivo) }}" alt="Foto de {{ avistamiento.ave.nombre }}">
+                            {% else %}
+                                <img src="{{ url_for('static', filename='img/placeholder.jpg') }}" alt="Sin imagen">
+                            {% endif %}
+                            
+                            <div class="info-ave">
+                                <h3>{{ avistamiento.ave.nombre }}</h3>
+                                <p><strong>Lugar:</strong> {{ avistamiento.lugar }}</p>
+                                <p><strong>Fecha y Hora:</strong> {{ avistamiento.fecha_hora.strftime('%d/%m/%Y - %H:%M') }} hrs</p>
+                                <p><strong>Voluntario:</strong> {{ avistamiento.voluntario.nombre }}</p>
+                                
+                                <!-- Mostramos la descripción (opcional si es muy larga, la puedes omitir en el resumen) -->
+                                {% if avistamiento.descripcion %}
+                                    <p><em>{{ avistamiento.descripcion }}</em></p>
+                                {% endif %}
+                            </div>
                         </article>
                     {% endfor %}
-                </div>
+                {% else %}
+                    <p>Aún no hay avistamientos registrados en el sistema.</p>
+                {% endif %}
             </div>
+        </div>
 
             <nav class="paginacion" aria-label="Paginacion de avistamientos">
                 <button type="button" id="btn-anterior" class="btn-paginacion">Anterior</button>
