@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     
-    // 1. Gráfico de Voluntarios Registrados por Región (Gráfico de Barras)
+    // Gráfico de Voluntarios Registrados por Región
     const ctxVoluntarios = document.getElementById('chart-voluntarios-region')?.getContext('2d');
     if (ctxVoluntarios) {
         new Chart(ctxVoluntarios, {
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // 2. Gráfico de Avistamientos Registrados (Gráfico de Línea / Histórico)
+    // Gráfico de Avistamientos Registrados
     const ctxAvistamientos = document.getElementById('chart-avistamientos-registrados')?.getContext('2d');
     if (ctxAvistamientos) {
         new Chart(ctxAvistamientos, {
