@@ -1,6 +1,9 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, jsonify, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
+from werkzeug.utils import secure_filename
 import os
+import re
 
 app = Flask(__name__)
 
@@ -10,15 +13,28 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Configuración para guardar archivos subidos
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 # init BD
 db = SQLAlchemy(app)
 
+
 # Definición de Modelos
+class Voluntario(db.Model):
+    __tablename__ = 'voluntario'
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(255), nullable=False)
+    email = db.Column(db.String(80), nullable=False)
+    telefono = db.Column(db.String(15), nullable=False)
+    fecha_registro = db.Column(db.DateTime, nullable=False)
+    comuna_id = db.Column(db.Integer, db.ForeignKey('comuna.id'), nullable=False)
+
+
 class Region(db.Model):
     __tablename__ = 'region'
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(200), nullable=False)
+
 
 class Comuna(db.Model):
     __tablename__ = 'comuna'
@@ -29,34 +45,202 @@ class Comuna(db.Model):
     region = db.relationship('Region', backref=db.backref('comunas', lazy=True))
 
 
-# RUTAS DE LA APLICACIÓN
+class Ave(db.Model):
+    __tablename__ = 'ave'
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(100), nullable=False)
 
+
+class Avistamiento(db.Model):
+    __tablename__ = 'avistamiento'
+    id = db.Column(db.Integer, primary_key=True)
+    fecha_hora = db.Column(db.DateTime, nullable=False)
+    lugar = db.Column(db.String(200), nullable=False)
+    descripcion = db.Column(db.Text)
+    
+    # Claves foráneas
+    ave_id = db.Column(db.Integer, db.ForeignKey('ave.id'), nullable=False)
+    voluntario_id = db.Column(db.Integer, db.ForeignKey('voluntario.id'), nullable=False)
+    
+    # Relaciones
+    ave = db.relationship('Ave', backref='avistamientos')
+    voluntario = db.relationship('Voluntario', backref='avistamientos')
+
+
+class Registro(db.Model):
+    __tablename__ = 'registro'
+    id = db.Column(db.Integer, primary_key=True)
+    ruta_archivo = db.Column(db.String(300), nullable=False)
+    nombre_archivo = db.Column(db.String(300), nullable=False)
+    avistamiento_id = db.Column(db.Integer, db.ForeignKey('avistamiento.id'), nullable=False)
+    
+    # Relación inversa para poder sacar la foto desde el avistamiento
+    avistamiento = db.relationship('Avistamiento', backref=db.backref('registros', lazy=True))
+
+
+
+# RUTAS DE LA APLICACIÓN
 # 1. Portada
 @app.route('/')
 def index():
-    return render_template('index.html')
+    ultimos2 = Avistamiento.query.order_by(Avistamiento.id.desc()).limit(2).all()
+    return render_template('index.html', ultimos_avist =ultimos2)
 
     
 # 2. Registrar Voluntario
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        # recibir los datos del formulario, validar en el servidor y guardar en BD
-        pass 
+        # 2.1. Recibir datos del formulario
+        nombre = request.form.get('nombre', '').strip()
+        email = request.form.get('email', '').strip()
+        celular = request.form.get('celular', '').strip()
+        region_id = request.form.get('region', '').strip()
+        comuna_id = request.form.get('comuna', '').strip()
 
+        # 2.2. Validaciones obligatorias en el Servidor
+        errores = []
+
+        if not nombre or len(nombre) < 3:
+            errores.append("El nombre completo debe tener al menos 3 caracteres.")
+        
+        regex_email = r'^[^\s@]+@[^\s@]+\.[^\s@]+$'
+        if not email or not re.match(regex_email, email):
+            errores.append("Debe ingresar un correo electrónico válido.")
+
+        regex_celular = r'^(\+?56)?9\d{8}$'
+        if not celular or not re.match(regex_celular, celular):
+            errores.append("El celular debe ser un número válido de Chile (ej: +56912345678 o 912345678).")
+
+        if not region_id:
+            errores.append("Debe seleccionar una región.")
+
+        if not comuna_id:
+            errores.append("Debe seleccionar una comuna.")
+        else:
+            # Validar que la comuna exista en la BD
+            comuna_obj = Comuna.query.get(comuna_id)
+            if not comuna_obj:
+                errores.append("La comuna seleccionada no es válida.")
+
+        # 2.3. Si hay errores de validación, recargamos con los mensajes
+        if errores:
+            regiones_db = Region.query.all()
+            return render_template('login.html', regiones=regiones_db, errores=errores)
+
+        # 2.4. Guardar voluntario en la Base de Datos según el esquema exacto
+        nuevo_voluntario = Voluntario(
+            nombre=nombre,
+            email=email,
+            telefono=celular,
+            fecha_registro=datetime.now(),
+            comuna_id=int(comuna_id)
+        )
+
+        try:
+            db.session.add(nuevo_voluntario)
+            db.session.commit()
+            # Redirigir a la portada tras guardar con éxito
+            return redirect(url_for('index'))
+        except Exception as e:
+            db.session.rollback()
+            regiones_db = Region.query.all()
+            return render_template('login.html', regiones=regiones_db, errores=["Error interno al guardar en la base de datos."])
+
+
+    # Si la petición es GET (cargar la página por primera vez)
     regiones_db = Region.query.all()
 
     return render_template('login.html', regiones=regiones_db)
+
+
+# 3. Obtener comunas de la region
+@app.route('/get_comunas/<int:region_id>')
+def get_comunas(region_id):
+    # Consulta a la base de datos: Comunas donde el region_id coincida
+    comunas = Comuna.query.filter_by(region_id=region_id).all()
+    
+    # Convertimos los objetos a un formato JSON
+    comunas_json = [{'id': c.id, 'nombre': c.nombre} for c in comunas]
+    return jsonify({'comunas': comunas_json})
 
 
 # 3. Registrar Avistamiento
 @app.route('/avistamiento', methods=['GET', 'POST'])
 def avistamiento():
     if request.method == 'POST':
-        # recibir los datos, validarás en el servidor, guardarás la imagen en UPLOAD_FOLDER y los datos en la BD
-        pass
+        # 1. Obtener campos del formulario
+        ave_id = request.form.get('ave_id') 
+        lugar = request.form.get('lugar')
+        fecha = request.form.get('fecha')
+        hora = request.form.get('hora')
+        archivo = request.files.get('multimedia')
 
-    return render_template('avistamiento.html')
+        # 2. Validaciones en el Servidor
+        errores = []
+
+        # CORRECCIÓN 1: Solo verificar que se haya seleccionado un ave (sin len < 2)
+        if not ave_id:
+            errores.append("Debe seleccionar un ave de la lista.")
+
+        if not lugar:
+            errores.append("El lugar del avistamiento es obligatorio.")
+
+        if not fecha or not hora:
+            errores.append("Debe seleccionar tanto la fecha como la hora del avistamiento.")
+
+        fecha_hora = None
+        if fecha and hora:
+            try:
+                fecha_hora = datetime.strptime(f"{fecha} {hora}", "%Y-%m-%d %H:%M")
+            except ValueError:
+                errores.append("El formato de fecha o hora no es válido.")
+
+        if not archivo or archivo.filename == '':
+            errores.append("Debe adjuntar una foto o video del avistamiento.")
+
+        if errores:
+            aves_db = Ave.query.all()
+            return render_template('avistamiento.html', errores=errores, aves=aves_db)
+
+        # CORRECCIÓN 2: Obtener el voluntario actual antes de usarlo
+        voluntario_obj = Voluntario.query.order_by(Voluntario.id.desc()).first()
+        if not voluntario_obj:
+            aves_db = Ave.query.all()
+            return render_template('avistamiento.html', errores=["Debe registrar al menos un voluntario antes de reportar un avistamiento."], aves=aves_db)
+
+        # 3. Crear el avistamiento
+        nuevo_avistamiento = Avistamiento(
+            fecha_hora=fecha_hora, # CORRECCIÓN 3: Pasar el objeto datetime
+            lugar=lugar,
+            descripcion="Avistamiento reportado",
+            ave_id=int(ave_id),
+            voluntario_id=voluntario_obj.id
+        )
+        db.session.add(nuevo_avistamiento)
+        db.session.flush() # Genera el ID del avistamiento para el registro
+
+        # 4. Guardar el archivo en disco e insertar en la tabla 'registro'
+        if archivo:
+            nombre_seguro = secure_filename(archivo.filename)
+            ruta_guardado = os.path.join(app.config['UPLOAD_FOLDER'], nombre_seguro)
+            archivo.save(ruta_guardado)
+
+            nuevo_registro = Registro(
+                ruta_archivo=f"static/uploads/{nombre_seguro}",
+                nombre_archivo=nombre_seguro,
+                avistamiento_id=nuevo_avistamiento.id
+            )
+            db.session.add(nuevo_registro)
+
+        db.session.commit()
+        
+        # Volver a la página de inicio
+        return redirect(url_for('index'))
+
+    # Si es GET, enviamos la lista de aves para llenar el <select>
+    aves_db = Ave.query.all()
+    return render_template('avistamiento.html', aves=aves_db)      
 
 
 # 4. Métricas (Dashboard)
