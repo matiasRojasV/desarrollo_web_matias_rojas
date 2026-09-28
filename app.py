@@ -252,9 +252,21 @@ def detalleAvistamiento(id):
 @app.route('/listAvistamientos')
 def listAvistamientos():
     page = request.args.get('page', 1, type=int)
-    avistamientos = Avistamiento.query.order_by(Avistamiento.fecha_hora.desc()).paginate(page=page, per_page=4)
-    return render_template('listAvistamientos.html', avistamientos=avistamientos)
+    orden = request.args.get('orden', 'fecha-desc')
 
+    # Determinar el orden de la consulta
+    if orden == 'fecha-asc':
+        query = Avistamiento.query.order_by(Avistamiento.fecha_hora.asc())
+    elif orden == 'lugar':
+        query = Avistamiento.query.order_by(Avistamiento.lugar.asc())
+    else:
+        query = Avistamiento.query.order_by(Avistamiento.fecha_hora.desc())
+
+    # Paginar la consulta ya ordenada
+    avistamientos = query.paginate(page=page, per_page=4, error_out=False)
+    
+    # Enviamos orden_actual a la plantilla para mantener la selección
+    return render_template('listAvistamientos.html', avistamientos=avistamientos, orden_actual=orden)
 
 # Dashboard
 @app.route('/dashboard')

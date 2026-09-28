@@ -8,17 +8,15 @@
         <p>Explora todos los registros aportados por nuestra comunidad.</p>
     </div>
 
-    <!-- Aquí va todo tu contenido de la lista -->
-
     <!-- Barra de Ordenamiento -->
     <div class="filtros-section" style="text-align: center; margin-bottom: 20px;">
-        <form id="form-filtros" onsubmit="event.preventDefault();">
+        <form action="{{ url_for('listAvistamientos') }}" method="GET" id="form-filtros">
             <div class="filtro-grupo" style="display: inline-block;">
                 <label for="ordenar-por">Ordenar por:</label>
-                <select id="ordenar-por" name="orden">
-                    <option value="fecha-desc">Fecha (más reciente)</option>
-                    <option value="fecha-asc">Fecha (más antigua)</option>
-                    <option value="lugar">Lugar (A-Z)</option>
+                <select id="ordenar-por" name="orden" onchange="this.form.submit()">
+                    <option value="fecha-desc" {% if orden_actual == 'fecha-desc' %}selected{% endif %}>Fecha (más reciente)</option>
+                    <option value="fecha-asc" {% if orden_actual == 'fecha-asc' %}selected{% endif %}>Fecha (más antigua)</option>
+                    <option value="lugar" {% if orden_actual == 'lugar' %}selected{% endif %}>Lugar (A-Z)</option>
                 </select>
             </div>
         </form>
@@ -27,12 +25,12 @@
     <!-- Contenedor de Avistamientos -->
     <div class="lista-avistamientos lista-2-columnas">
         {% if avistamientos %}
-            {% for avistamiento in avistamientos %}
+            {% for avistamiento in avistamientos.items %}
                 <article class="tarjeta-ave">
                     {% if avistamiento.registros %}
-                        <img src="{{ url_for('static', filename='uploads/' + avistamiento.registros[0].nombre_archivo) }}" alt="Foto de {{ avistamiento.ave.nombre }}" width="200">
+                        <img src="{{ url_for('static', filename='uploads/' + avistamiento.registros[0].nombre_archivo) }}" alt="Foto de {{ avistamiento.ave.nombre }}">
                     {% else %}
-                        <img src="{{ url_for('static', filename='img/placeholder.jpg') }}" alt="Sin imagen" width="200">
+                        <img src="{{ url_for('static', filename='img/placeholder.jpg') }}" alt="Sin imagen">
                     {% endif %}
                     
                     <div class="info-ave">
@@ -52,15 +50,23 @@
         {% endif %}
     </div>
 
-    <!-- Paginacion -->
+    <!-- Paginación Flask -->
     <nav class="paginacion" aria-label="Paginacion de avistamientos" style="text-align: center; margin-top: 20px;">
-        <button type="button" id="btn-anterior" class="btn-paginacion">Anterior</button>
-        <span id="paginacion-info" class="paginacion-info" style="margin: 0 15px;">Página 1 de 1</span>
-        <button type="button" id="btn-siguiente" class="btn-paginacion">Siguiente</button>
+        {% if avistamientos.has_prev %}
+            <a href="{{ url_for('listAvistamientos', page=avistamientos.prev_num) }}" class="btn-paginacion" style="text-decoration: none;">Anterior</a>
+        {% else %}
+            <button class="btn-paginacion" disabled>Anterior</button>
+        {% endif %}
+
+        <span class="paginacion-info" style="margin: 0 15px;">
+            Página {{ avistamientos.page }} de {{ avistamientos.pages if avistamientos.pages > 0 else 1 }}
+        </span>
+
+        {% if avistamientos.has_next %}
+            <a href="{{ url_for('listAvistamientos', page=avistamientos.next_num) }}" class="btn-paginacion" style="text-decoration: none;">Siguiente</a>
+        {% else %}
+            <button class="btn-paginacion" disabled>Siguiente</button>
+        {% endif %}
     </nav>
 </main>
-{% endblock %}
-
-{% block scripts %}
-    <script src="{{ url_for('static', filename='js/indexFilter.js') }}"></script>
 {% endblock %}
