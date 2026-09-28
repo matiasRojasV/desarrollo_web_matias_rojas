@@ -23,13 +23,18 @@ def shutdown_session(exception=None):
 @app.route('/')
 def index():
     ultimos2 = obtener_ultimos_avistamientos(limit=2)
-    return render_template('index.html', ultimos_avistamientos=ultimos2)
+
+    exito = request.args.get('exito')
+    mensaje_exito = None
+    if exito == 'avistamiento':
+        mensaje_exito = "¡El avistamiento se ha registrado exitosamente!"
+
+    return render_template('index.html', ultimos_avistamientos=ultimos2, mensaje_exito=mensaje_exito)
 
     
 # Registrar Voluntario
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-
     # Detectar si viene redirigido por falta de sesión
     alerta_sesion = request.args.get('alerta')
     errores = []
@@ -148,12 +153,13 @@ def avistamiento():
                 voluntario_id=voluntario_id,
                 nombre_archivo=nombre_seguro
             )
-            return redirect(url_for('index'))
+            return redirect(url_for('index', exito='avistamiento'))
             
-        except Exception:
+        except Exception as e:
+            print(e)
             if os.path.exists(ruta_guardado):
                 os.remove(ruta_guardado)
-            
+
             return render_template('avistamiento.html', errores=["Error interno al guardar el avistamiento en la base de datos."], aves=obtener_aves())
     
     return render_template('avistamiento.html', aves=obtener_aves())

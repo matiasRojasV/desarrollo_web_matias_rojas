@@ -39,3 +39,13 @@
     </div>
 </main>
 {% endblock %}
+
+{% block scripts %}
+    {% if mensaje_exito %}
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                alert("{{ mensaje_exito }}");
+            });
+        </script>
+    {% endif %}
+{% endblock %}
