@@ -24,6 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     } else {
         // Si no está logueado
-        authContainer.innerHTML = `<a href="/login">Registro / Login</a>`;
+        authContainer.innerHTML = `<a href="/login" class="auth-link">Registro / Login</a>`;
     }
 });

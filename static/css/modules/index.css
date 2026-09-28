@@ -95,6 +95,10 @@
     border-radius: 6px;
 }
 
+.tarjeta-ave a {
+    text-decoration: none;
+}
+
 .info-ave h3 {
     color: var(--primary);
     margin-bottom: 0.5rem;
