@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Bloque dinámico para el título de la pestaña -->
     <title>{% block title %}Unión de Ornitólogos de Chile{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
@@ -25,12 +24,13 @@
         </nav>
     </header>
 
-    <!-- Bloque dinámico donde se inyecta el contenido de cada página -->
+    <!-- Bloque dinamico donde se inyecta el contenido de cada página -->
     {% block content %}
     {% endblock %}
 
     <!-- Scripts comunes a todas las páginas -->
     <script src="{{ url_for('static', filename='js/authHeader.js') }}"></script>
-    {% block scripts %}{% endblock %}
+    {% block scripts %}
+    {% endblock %}
 </body>
 </html>
