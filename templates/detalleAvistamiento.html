@@ -4,20 +4,26 @@
 
 <main>
     <h2>Avistamiento: {{ avistamiento.ave.nombre }}</h2>
-    <p><strong>Registrado por:</strong> {{ avistamiento.voluntario.nombre }}</p>
-    <p><strong>Fecha y Hora:</strong> {{ avistamiento.fecha_hora.strftime('%d/%m/%Y - %H:%M') }} hrs</p>
-    <p><strong>Lugar:</strong> {{ avistamiento.lugar }}</p>
-    <p><strong>Descripción:</strong> {{ avistamiento.descripcion or 'Sin descripción adicional.' }}</p>
+    <div class="detalle-columnas">
+        <!-- Columna 1: Información -->
+        <div class="info-detalle">
+            <p><strong>Registrado por:</strong> {{ avistamiento.voluntario.nombre }}</p>
+            <p><strong>Fecha y Hora:</strong> {{ avistamiento.fecha_hora.strftime('%d/%m/%Y - %H:%M') }} hrs</p>
+            <p><strong>Lugar:</strong> {{ avistamiento.lugar }}</p>
+            <p><strong>Descripción:</strong> {{ avistamiento.descripcion or 'Sin descripción adicional.' }}</p>
 
-    <h3>Archivos Multimedia</h3>
-    <div class="multimedia-container">
-        {% for registro in avistamiento.registros %}
-            <img src="{{ url_for('static', filename='uploads/' + registro.nombre_archivo) }}" alt="Imagen del avistamiento" style="max-width: 50%; border-radius: 8px; margin-bottom: 10px;">
-        {% else %}
-            <p>No hay imágenes para este avistamiento.</p>
-        {% endfor %}
+            <a href="{{ url_for('listAvistamientos') }}" class="btn-paginacion" style="text-decoration: none; display: inline-block; margin-top: 1.5rem;">Volver al listado</a>
+        </div>
+
+        <!-- Columna 2: Imágenes -->
+        <div class="multimedia-container">
+            <h3>Archivos Multimedia</h3>
+            {% for registro in avistamiento.registros %}
+                <img src="{{ url_for('static', filename='uploads/' + registro.nombre_archivo) }}" alt="Imagen del avistamiento" style="max-width: 50%; border-radius: 8px; margin-bottom: 10px;">
+            {% else %}
+                <p>No hay imágenes para este avistamiento.</p>
+            {% endfor %}
+        </div>
     </div>
-    
-    <a href="{{ url_for('listAvistamientos') }}" class="btn-paginacion" style="text-decoration: none;">Volver al listado</a>
 </main>
 {% endblock %}
