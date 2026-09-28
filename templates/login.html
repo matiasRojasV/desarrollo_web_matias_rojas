@@ -1,85 +1,64 @@
-<!DOCTYPE html>
-<html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Registro de Voluntarios - Avistamiento de Aves</title>
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    </head>
+{% extends "base.html" %}
 
-    <body>
-        <header>
-            <div id="auth-container">
-                <a href="{{ url_for('login') }}" class="auth-link">Registro / Login</a>          
-            </div>
+{% block title %}Registro de Voluntarios - Aves en Chile{% endblock %}
 
-            <h1>Unión de Ornitólogos de Chile</h1>
-            <nav>
-                <ul>
-                    <li><a href="{{ url_for('index') }}">Inicio</a></li>
-                    <li><a href="{{ url_for('listAvistamientos') }}">Ver Avistamientos</a></li>
-                    <li><a href="{{ url_for('avistamiento') }}">Informar Avistamiento</a></li>
-                    <li><a href="{{ url_for('dashboard') }}">Métricas</a></li>
-                </ul>
-            </nav>
-        </header>
+{% block content %}
+<main class="form">
+    <h2>Formulario de Registro de Voluntarios</h2>
+    <p>Los campos marcados con (*) son obligatorios.</p>
 
-        <main class="form">
-            <h2>Formulario de Registro de Voluntarios</h2>
-            <p>Los campos marcados con (*) son obligatorios.</p>
+    <!-- Contenedor para mostrar los errores de validacion -->
+    <div id="mensajes-error" role="alert">
+        {% if errores %}
+            <ul style="color: red;">
+                {% for error in errores %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
 
-            <!-- Contenedor para mostrar los errores de validacion -->
-            <div id="mensajes-error" role="alert">
-                {% if errores %}
-                    <ul style="color: red;">
-                        {% for error in errores %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </div>
+    <form id="form-voluntario"  action="{{ url_for('login') }}" method="post">
+        <fieldset>
+            <legend>Información Personal y Contacto</legend>
+            <p>
+                <label for="nombre">Nombre Completo (*):</label>
+                <input type="text" id="nombre" name="nombre">
+            </p>
+            <p>
+                <label for="email">Correo (*):</label>
+                <input type="text" id="email" name="email" placeholder="ejemplo@correo.cl">
+            </p>
+            <p>
+                <label for="celular">Celular (*):</label>
+                <input type="text" id="celular" name="celular" placeholder="+56912345678">
+            </p>
+        </fieldset>
 
-            <form id="form-voluntario"  action="{{ url_for('login') }}" method="post">
-                <fieldset>
-                    <legend>Información Personal y Contacto</legend>
-                    <p>
-                        <label for="nombre">Nombre Completo (*):</label>
-                        <input type="text" id="nombre" name="nombre">
-                    </p>
-                    <p>
-                        <label for="email">Correo (*):</label>
-                        <input type="text" id="email" name="email" placeholder="ejemplo@correo.cl">
-                    </p>
-                    <p>
-                        <label for="celular">Celular (*):</label>
-                        <input type="text" id="celular" name="celular" placeholder="+56912345678">
-                    </p>
-                </fieldset>
+        <fieldset>
+            <legend>Dirección Postal</legend>
+            <p>
+                <label for="region">Región (*):</label>
+                <select id="region" name="region">
+                    <option value=""> Seleccione una región </option>
+                    {% for reg in regiones %}
+                        <option value="{{ reg.id }}">{{ reg.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </p>
+            <p>
+                <label for="comuna">Comuna (*):</label>
+                <select id="comuna" name="comuna" disabled>
+                    <option value=""> Seleccione una región primero </option>
+                </select>
+            </p>
+        </fieldset>
 
-                <fieldset>
-                    <legend>Dirección Postal</legend>
-                    <p>
-                        <label for="region">Región (*):</label>
-                        <select id="region" name="region">
-                            <option value=""> Seleccione una región </option>
-                            {% for reg in regiones %}
-                                <option value="{{ reg.id }}">{{ reg.nombre }}</option>
-                            {% endfor %}
-                        </select>
-                    </p>
-                    <p>
-                        <label for="comuna">Comuna (*):</label>
-                        <select id="comuna" name="comuna" disabled>
-                            <option value=""> Seleccione una región primero </option>
-                        </select>
-                    </p>
-                </fieldset>
+        <button type="submit">Registrar Voluntario</button>
+    </form>
+</main>
+{% endblock %}
 
-                <button type="submit">Registrar Voluntario</button>
-            </form>
-        </main>
-
-        <script src="{{ url_for('static', filename='js/singUpVal.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/authHeader.js') }}"></script>
-    </body>
-</html>
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/singUpVal.js') }}"></script>
+{% endblock %}

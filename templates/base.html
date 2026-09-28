@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bloque dinámico para el título de la pestaña -->
+    <title>{% block title %}Unión de Ornitólogos de Chile{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+
+<body>
+    <header>
+        <div id="auth-container">
+            <a href="{{ url_for('login') }}" class="auth-link">Iniciar Sesión</a>
+        </div>
+
+        <h1>Unión de Ornitólogos de Chile</h1>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('index') }}">Inicio</a></li>
+                <li><a href="{{ url_for('listAvistamientos') }}">Ver Avistamientos</a></li>
+                <li><a href="{{ url_for('avistamiento') }}">Informar Avistamiento</a></li>
+                <li><a href="{{ url_for('dashboard') }}">Métricas</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Bloque dinámico donde se inyecta el contenido de cada página -->
+    {% block content %}
+    {% endblock %}
+
+    <!-- Scripts comunes a todas las páginas -->
+    <script src="{{ url_for('static', filename='js/authHeader.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
