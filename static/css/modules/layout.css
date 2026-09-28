@@ -69,6 +69,23 @@ header h1 {
     color: var(--accent);
 }
 
+.btn-logout {
+    text-decoration: none;
+    background-color: transparent;
+    border: 1px solid var(--error);
+    color: var(--error);
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-logout:hover {
+    background-color: var(--error);
+    color: #ffffff;
+}
+
 nav ul {
     list-style: none;
     display: flex;

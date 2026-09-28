@@ -29,6 +29,14 @@ def index():
 # Registrar Voluntario
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+
+    # Detectar si viene redirigido por falta de sesión
+    alerta_sesion = request.args.get('alerta')
+    errores = []
+
+    if alerta_sesion == 'requerido':
+        errores.append("Debes registrarte o iniciar sesión para poder informar un avistamiento.")
+
     if request.method == 'POST':
         nombre = request.form.get('nombre', '').strip()
         email = request.form.get('email', '').strip()
@@ -71,10 +79,10 @@ def login():
             return render_template('exitoLogin.html', nombre=nuevo_voluntario.nombre)
         
         except Exception:
-            return render_template('login.html', regiones=obtener_regiones(), errores=["Error interno al guardar en la base de datos."])
+            return render_template('login.html', regiones=obtener_regiones(), errores=errores)
 
     # GET
-    return render_template('login.html', regiones=obtener_regiones())
+    return render_template('login.html', regiones=obtener_regiones(), errores=errores)
 
 
 @app.route('/get_comunas/<int:region_id>')
@@ -95,8 +103,8 @@ def avistamiento():
     # Validar que exista una sesión activa
     voluntario_id = session.get('voluntario_id')
     if not voluntario_id:
-        return render_template('login.html', regiones=obtener_regiones(), errores=["Debes registrarte o iniciar sesión para poder informar un avistamiento."])
-    
+        return redirect(url_for('login', alerta='requerido'))
+
     if request.method == 'POST':
         ave_id = request.form.get('ave_id') 
         lugar = request.form.get('lugar', '').strip()

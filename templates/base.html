@@ -10,7 +10,12 @@
 <body>
     <header>
         <div id="auth-container">
-            <a href="{{ url_for('login') }}" class="auth-link">Iniciar Sesión</a>
+            {% if session.get('voluntario_id') %}
+                <span class="user-welcome">Hola, <strong>{{ session.get('voluntario_nombre') }}</strong></span>
+                <a href="{{ url_for('logout') }}" class="btn-logout" title="Cerrar Sesión">Cerrar Sesión</a>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="auth-link">Registro / Iniciar Sesión</a>
+            {% endif %}
         </div>
 
         <h1>Unión de Ornitólogos de Chile</h1>
@@ -29,7 +34,6 @@
     {% endblock %}
 
     <!-- Scripts comunes a todas las páginas -->
-    <script src="{{ url_for('static', filename='js/authHeader.js') }}"></script>
     {% block scripts %}
     {% endblock %}
 </body>
