@@ -7,7 +7,7 @@ import re
 
 app = Flask(__name__)
 
-#Configuración obligatoria para usar sesiones en Flask
+#Configuración para usar sesiones en Flask
 app.secret_key = 'clave_secreta_super_segura_para_sesiones'
 
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
@@ -35,7 +35,7 @@ def index():
 # Registrar Voluntario
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    # Detectar si viene redirigido por falta de sesión
+    # Detectar si viene por falta de sesión
     alerta_sesion = request.args.get('alerta')
     errores = []
 
@@ -170,12 +170,12 @@ def avistamiento():
     # GET
     return render_template('avistamiento.html', aves=obtener_aves())
 
+
 @app.route('/avistamiento/<int:id>')
 def detalleAvistamiento(id):
-    # Consulta a la BD encapsulada desde db.py
     avistamiento = obtener_avistamiento_por_id(id)
     
-    # Manejo de la respuesta HTTP en app.py
+    # Manejo de la respuesta HTTP
     if not avistamiento:
         return render_template('404.html'), 404
         

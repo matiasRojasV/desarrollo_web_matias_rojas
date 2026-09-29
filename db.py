@@ -10,6 +10,7 @@ db_session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind
 
 Base = declarative_base()
 
+
 # Modelos
 class Voluntario(Base):
     __tablename__ = 'voluntario'
@@ -65,6 +66,7 @@ class Registro(Base):
     
     avistamiento = relationship('Avistamiento', backref='registros')
 
+
 # Paginador
 class Paginador:
     def __init__(self, query, page, per_page):
@@ -76,6 +78,7 @@ class Paginador:
         self.has_next = page < self.pages
         self.prev_num = page - 1
         self.next_num = page + 1
+
 
 # Funciones lecturas
 def obtener_ultimos_avistamientos(limit=2):
@@ -133,7 +136,7 @@ def crear_voluntario(nombre, email, telefono, comuna_id):
 def crear_avistamiento(fecha_hora, lugar, descripcion, ave_id, voluntario_id, nombres_archivos):
     """Crea un avistamiento y su registro multimedia asociado."""
     try:
-        # 1. Crear el avistamiento
+        # Crear el avistamiento
         nuevo_avistamiento = Avistamiento(
             fecha_hora=fecha_hora,
             lugar=lugar,
@@ -145,17 +148,17 @@ def crear_avistamiento(fecha_hora, lugar, descripcion, ave_id, voluntario_id, no
 
         db_session.flush() # Guardamos para generar el avistamiento.id
 
+        # Nuevo registro multimedia por cada archivo
         for nombre in nombres_archivos:
             ruta_relativa = f"uploads/{nombre}"
-            # Creas un nuevo registro multimedia por cada archivo
             nuevo_registro = Registro(
                 nombre_archivo=nombre,
                 ruta_archivo=ruta_relativa, 
-                avistamiento_id=nuevo_avistamiento.id  # se vincula al avistamiento recién creado
+                avistamiento_id=nuevo_avistamiento.id
             )
             db_session.add(nuevo_registro)
 
-        # 3. Confirmar ambos cambios
+        # Confirmar cambios
         db_session.commit()
 
         return nuevo_avistamiento

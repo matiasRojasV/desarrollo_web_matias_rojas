@@ -1,6 +1,4 @@
-/* =========================================
-   1. RESET Y VARIABLES GLOBALES
-   ========================================= */
+/* 1. RESET Y VARIABLES GLOBALES */
 * {
     margin: 0;
     padding: 0;
@@ -29,9 +27,7 @@ body {
     min-height: 100vh;
 }
 
-/* =========================================
-   2. LAYOUT GENERAL (HEADER Y MAIN)
-   ========================================= */
+/* 2. LAYOUT GENERAL (HEADER Y MAIN) */
 header {
     width: 100%;
     background-color: var(--card-bg);
@@ -133,9 +129,7 @@ main.form {
     margin-right: auto;
 }
 
-/* =========================================
-   3. COMPONENTES: BOTONES Y PAGINACIÓN
-   ========================================= */
+/* 3. COMPONENTES: BOTONES Y PAGINACIÓN */
 .paginacion {
     display: flex;
     justify-content: center;
@@ -169,9 +163,7 @@ main.form {
     color: var(--primary);
 }
 
-/* =========================================
-   4. LISTADOS Y TARJETAS DE AVES
-   ========================================= */
+/* 4. LISTADOS Y TARJETAS DE AVES */
 .filtros-section {
     background-color: #fafafa;
     padding: 1rem;
@@ -248,9 +240,7 @@ main.form {
 .contenedor-scroll::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 4px; }
 
 
-/* =========================================
-   5. DETALLE DE AVISTAMIENTO
-   ========================================= */
+/* 5. DETALLE DE AVISTAMIENTO */
 .detalle-columnas {
     display: grid;
     grid-template-columns: 1fr 1fr;
