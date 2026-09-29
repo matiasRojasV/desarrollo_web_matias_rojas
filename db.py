@@ -39,7 +39,7 @@ class Comuna(Base):
 class Ave(Base):
     __tablename__ = 'ave'
     id = Column(Integer, primary_key=True)
-    nombre = Column(String(100), nullable=False)
+    nombre = Column(String(80), nullable=False)
 
 
 class Avistamiento(Base):
@@ -47,7 +47,7 @@ class Avistamiento(Base):
     id = Column(Integer, primary_key=True)
     fecha_hora = Column(DateTime, nullable=False)
     lugar = Column(String(200), nullable=False)
-    descripcion = Column(Text)
+    descripcion = Column(Text(500))
     
     ave_id = Column(Integer, ForeignKey('ave.id'), nullable=False)
     voluntario_id = Column(Integer, ForeignKey('voluntario.id'), nullable=False)
@@ -130,7 +130,7 @@ def crear_voluntario(nombre, email, telefono, comuna_id):
         raise e
 
 
-def crear_avistamiento(fecha_hora, lugar, descripcion, ave_id, voluntario_id, nombre_archivo):
+def crear_avistamiento(fecha_hora, lugar, descripcion, ave_id, voluntario_id, nombres_archivos):
     """Crea un avistamiento y su registro multimedia asociado."""
     try:
         # 1. Crear el avistamiento
@@ -138,22 +138,26 @@ def crear_avistamiento(fecha_hora, lugar, descripcion, ave_id, voluntario_id, no
             fecha_hora=fecha_hora,
             lugar=lugar,
             descripcion=descripcion,
-            ave_id=int(ave_id),
+            ave_id=ave_id,
             voluntario_id=voluntario_id
         )
         db_session.add(nuevo_avistamiento)
-        db_session.flush() # Guardamos temp para generar el avistamiento.id
 
-        # 2. Crear el registro multimedia asociado
-        nuevo_registro = Registro(
-            ruta_archivo=f"static/uploads/{nombre_archivo}",
-            nombre_archivo=nombre_archivo,
-            avistamiento_id=nuevo_avistamiento.id
-        )
-        db_session.add(nuevo_registro)
+        db_session.flush() # Guardamos para generar el avistamiento.id
+
+        for nombre in nombres_archivos:
+            ruta_relativa = f"uploads/{nombre}"
+            # Creas un nuevo registro multimedia por cada archivo
+            nuevo_registro = Registro(
+                nombre_archivo=nombre,
+                ruta_archivo=ruta_relativa, 
+                avistamiento_id=nuevo_avistamiento.id  # se vincula al avistamiento recién creado
+            )
+            db_session.add(nuevo_registro)
 
         # 3. Confirmar ambos cambios
         db_session.commit()
+
         return nuevo_avistamiento
         
     except Exception as e:

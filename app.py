@@ -116,7 +116,7 @@ def avistamiento():
         descripcion = request.form.get('descripcion', '').strip()
         fecha = request.form.get('fecha', '').strip()
         hora = request.form.get('hora', '').strip()
-        archivo = request.files.get('multimedia')
+        archivos = request.files.getlist('multimedia')
 
         errores = []
 
@@ -134,34 +134,40 @@ def avistamiento():
             except ValueError:
                 errores.append("El formato de fecha u hora no es válido.")
         
-        if not archivo or archivo.filename == '':
-            errores.append("Debe adjuntar una foto o video del avistamiento.")
+        if not archivos or archivos[0].filename == '':
+            errores.append("Debe adjuntar al menos foto o video del avistamiento.")
 
         if errores:
             return render_template('avistamiento.html', errores=errores, aves=obtener_aves())
 
-        nombre_seguro = secure_filename(archivo.filename)
-        ruta_guardado = os.path.join(app.config['UPLOAD_FOLDER'], nombre_seguro)
-
+        nombres_guardados = []
         try:
-            archivo.save(ruta_guardado)
+            for archivo in archivos:
+                if archivo and archivo.filename != '':
+                    nombre_seguro = secure_filename(archivo.filename)        
+                    ruta_guardado = os.path.join(app.config['UPLOAD_FOLDER'], nombre_seguro)
+                    archivo.save(ruta_guardado)
+                    nombres_guardados.append(nombre_seguro)
+
             crear_avistamiento(
                 fecha_hora=fecha_hora,
                 lugar=lugar,
                 descripcion=descripcion,
                 ave_id=ave_id,
                 voluntario_id=voluntario_id,
-                nombre_archivo=nombre_seguro
+                nombre_archivo=nombres_guardados
             )
             return redirect(url_for('index', exito='avistamiento'))
             
         except Exception as e:
-            print(e)
-            if os.path.exists(ruta_guardado):
-                os.remove(ruta_guardado)
+            for nombre in nombres_guardados:
+                ruta_error = os.path.join(app.config['UPLOAD_FOLDER'], nombre)
+                if os.path.exists(ruta_error):
+                    os.remove(ruta_error)
 
             return render_template('avistamiento.html', errores=["Error interno al guardar el avistamiento en la base de datos."], aves=obtener_aves())
-    
+
+    # GET
     return render_template('avistamiento.html', aves=obtener_aves())
 
 @app.route('/avistamiento/<int:id>')
