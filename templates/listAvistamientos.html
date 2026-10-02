@@ -50,7 +50,7 @@
         {% endif %}
     </div>
 
-    <!-- Paginación Flask -->
+    <!-- Paginacion -->
     <nav class="paginacion" aria-label="Paginacion de avistamientos" style="text-align: center; margin-top: 20px;">
         {% if avistamientos.has_prev %}
             <a href="{{ url_for('listAvistamientos', page=avistamientos.prev_num) }}" class="btn-paginacion" style="text-decoration: none;">Anterior</a>

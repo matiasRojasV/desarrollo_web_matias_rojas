@@ -84,20 +84,26 @@ class Paginador:
 def obtener_ultimos_avistamientos(limit=2):
     return db_session.query(Avistamiento).order_by(Avistamiento.id.desc()).limit(limit).all()
 
+
 def obtener_regiones():
     return db_session.query(Region).all()
+
 
 def obtener_comuna_por_id(comuna_id):
     return db_session.get(Comuna, comuna_id)
 
+
 def obtener_comunas_por_region(region_id):
     return db_session.query(Comuna).filter_by(region_id=region_id).all()
+
 
 def obtener_aves():
     return db_session.query(Ave).all()
 
+
 def obtener_avistamiento_por_id(avistamiento_id):
     return db_session.get(Avistamiento, avistamiento_id)
+
 
 def obtener_avistamientos_paginados(page=1, per_page=4, orden='fecha-desc'):
     query = db_session.query(Avistamiento)

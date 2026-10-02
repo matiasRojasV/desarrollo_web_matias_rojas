@@ -45,9 +45,6 @@
         document.addEventListener('DOMContentLoaded', () => {
             {% if mensaje_exito %}
                 alert("{{ mensaje_exito }}");
-            {% elif session.get('voluntario_id') %}
-                // Opcional: Alerta silenciosa en consola o mensaje emergente
-                console.log("Sesión activa: {{ session.get('voluntario_nombre') }}");
             {% else %}
                 alert("¡Bienvenido al Registro Nacional de Avistamientos!");
             {% endif %}
