@@ -37,13 +37,14 @@ La aplicación permite registrar voluntarios, reportar avistamientos de aves aco
    ```bash
    git switch "Tarea-2"
    ```
+   
 3. creacion de entorno virtual e intalacion de requerimientos:
    ```bash
    python -m venv .venv
    . .venv/bin/activate
    pip install -r requirements.txt
    ```
-   
+
 2. Iniciar la aplicación Flask:
    ```bash
    python app.py
