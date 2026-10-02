@@ -1,66 +1,108 @@
-# Tarea 1 - CC5002 Aplicaciones Web
+# Tarea 2 - CC5002 Desarrollo de Aplicaciones Web
 
-## Estructura del proyecto
+Este proyecto corresponde al desarrollo de la **Tarea 2** para la Unión de Ornitólogos de Chile. Consiste en la evolución del prototipo frontend desarrollado en la Tarea 1 hacia una aplicación web dinámica funcional construida con **Python (Flask)**, **SQLAlchemy ORM** y **MySQL**.
 
-Este proyecto fue desarrollado con HTML5, CSS3 y JavaScript, sin backend ni base de datos.
+La aplicación permite registrar voluntarios, reportar avistamientos de aves acompañados de archivos multimedia, consultar avistamientos de forma paginada y ordenada, e interactuar con un panel de métricas visuales.
 
-- `html/index.html`: listado de avistamientos con filtro, ordenamiento y paginacion.
-- `html/login.html`: formulario de registro de voluntarios.
-- `html/avistamiento.html`: formulario para informar avistamientos.
-- `html/dashboard.html`: panel de metricas con graficos.
-- `js/singUpVal.js`: validacion del registro y carga de regiones/comunas desde JSON.
-- `js/avistamientoVal.js`: validacion del formulario de avistamiento y control de acceso por sesion.
-- `js/indexFilter.js`: filtro por tipo, ordenamiento y logica de paginacion del listado.
-- `js/dashboard.js`: configuracion de graficos usando Chart.js.
-- `js/authHeader.js`: renderizado del estado de sesion en cabecera y cierre de sesion.
-- `js/regiones.json`: datos de regiones y comunas de Chile.
-- `css/styles.css`: archivo de entrada de estilos.
-- `css/modules/`: estilos separados por responsabilidad (`base.css`, `layout.css`, `forms.css`, `index.css`, `dashboard.css`).
+---
 
-## Decisiones tecnicas y de diseno
+## Requisitos del Sistema y Configuración
 
-## 1) HTML semantico y codigo legible
-Se priorizo el uso de etiquetas semanticas (`header`, `nav`, `main`, `article`, `fieldset`) para mantener una estructura clara y facilitar validacion y mantencion.
+### 1. Requisitos
+* **Python:** versión 3.8 o superior.
+* **MySQL Server:** en ejecución en `localhost:3306`.
+* **Librerías de Python:**
+  ```bash
+  pip install Flask SQLAlchemy PyMySQL Werkzeug
+  ```
 
-## 2) Validaciones en JavaScript
-Las reglas de validacion se implementaron en JavaScript, por ejemplo:
+### 2. Base de Datos
+1. Asegurarse de que el servicio MySQL esté activo en el puerto `3306`.
+2. Crear la base de datos `tarea2` y el usuario requerido ejecutando las siguientes credenciales:
+   * **Host:** `localhost`
+   * **Puerto:** `3306`
+   * **Base de datos:** `tarea2`
+   * **Usuario:** `cc5002`
+   * **Contraseña:** `programacionweb`
+3. Cargar los scripts SQL en el siguiente orden estricto:
+   1. `tarea2.sql` (Estructura de tablas: `voluntario`, `region`, `comuna`, `ave`, `avistamiento`, `registro`)
+   2. `region-comuna.sql` (Poblado de regiones y comunas)
+   3. `aves.sql` (Catálogo nacional de aves)
 
-- Registro: nombre minimo, formato de correo, formato de celular chileno, region y comuna obligatorias.
-- Avistamiento: tipo, nombre y lugar obligatorios, fecha/hora no futura, limite de antiguedad y archivo multimedia obligatorio.
+---
 
-## 3) Sesion local (Web Storage)
-Como la tarea es un prototipo estatico, la cuenta/sesion se simula en `localStorage`:
+## Instrucciones de Ejecución
 
-- Al registrarse correctamente, se guardan:
-  - `voluntarioRegistrado = "true"`
-  - `nombreVoluntario = "<nombre ingresado>"`
-- `authHeader.js` lee esos datos para mostrar en el header:
-  - estado no autenticado: enlace `Registro / Login`
-  - estado autenticado: saludo + boton `Cerrar Sesion`
-- Al cerrar sesion, se eliminan ambas claves del `localStorage`.
-- `avistamientoVal.js` restringe el acceso al formulario de avistamiento si no existe sesion activa, redirigiendo a `login.html`.
+1. Clonar el repositorio y cambiarse a la rama `Tarea 2`:
+   ```bash
+   git switch "Tarea-2"
+   ```
+2. Iniciar la aplicación Flask:
+   ```bash
+   python app.py
+   ```
+3. Acceder mediante el navegador a: [http://127.0.0.1:5000](http://127.0.0.1:5000)
 
-Esta decision permite probar el flujo completo de navegacion y permisos sin necesidad de servidor ni persistencia real.
+---
 
-## 4) CSS modular simple
-Se separo el CSS por responsabilidades:
+## Decisiones de Diseño e Implementación
 
-- `base.css`: reset, variables y estilos globales.
-- `layout.css`: header, navegacion y contenedor principal.
-- `forms.css`: formularios, inputs, botones y mensajes de error.
-- `index.css`: estilos del listado de avistamientos y paginacion.
-- `dashboard.css`: estilos especificos del dashboard.
+### 1. Registro de Voluntarios y Manejo de Sesión
+* **Flujo Post-Registro (`exitoLogin.html`):** Al registrar exitosamente un voluntario en `/login`, la aplicación guarda su ID y nombre en la sesión del servidor (`session['voluntario_id']`) y redirige a una plantilla intermedia `exitoLogin.html`. Esta vista confirma la acción y le da la opción al voluntario de continuar al inicio o registrar un avistamiento directamente.
+* **Marca de Tiempo Automática:** La fecha y hora de registro se calculan en el servidor mediante `datetime.now()` al momento de insertar en la tabla `voluntario`.
+* **Protección de Rutas:** Para ingresar un avistamiento (`/avistamiento`), la ruta verifica la presencia de la sesión activa. Si no existe, redirige al login con una alerta.
 
-`styles.css` actua como agregador mediante `@import`, por lo que cada HTML mantiene un solo `<link>` principal.
+### 2. Doble Validación (Cliente / Servidor)
+* **Validación en Cliente (JavaScript):**
+  * `singUpVal.js`: Valida los datos del voluntario (formato de correo, número celular de Chile) y consume la API interna `/get_comunas/<region_id>` vía AJAX para cargar las comunas dinámicamente según la región seleccionada.
+  * `avistamientoVal.js`: Verifica que se complete el ave, lugar, fecha, hora y archivo adjunto antes de enviar.
+* **Validación en Servidor (Python/Flask):**
+  * Se re-verifican todos los datos usando expresiones regulares (`re`) para proteger el sistema ante peticiones maliciosas que omitan las validaciones de JS.
+  * Ante errores de validación, se preservan los mensajes de error en la vista sin perder el contexto.
 
-## 5) Listado de avistamientos con filtro, orden y paginacion
-En `index.html` se implementa:
+### 3. Almacenamiento Multimedia y Manejo Transaccional
+* **Seguridad de Archivos:** Las imágenes y videos adjuntados se sanean con `secure_filename` de Werkzeug y se guardan físicamente en `static/uploads/`.
+* **Registros Múltiples:** Admite múltiples archivos por avistamiento, creando una entrada en la tabla `registro` por cada archivo subido.
+* **Limpieza de Archivos en Fallos (Rollback):** Si ocurre una falla en la base de datos tras haber guardado los archivos en el sistema de archivos, un bloque `try-except` se encarga de eliminar los archivos recién subidos en disco para evitar guardar archivos huérfanos.
 
-- filtro por tipo de ave,
-- orden por fecha (asc/desc) y lugar,
-- paginacion en cliente (`Anterior`, `Siguiente`, indicador de pagina).
+### 4. Arquitectura CSS Modular
+Para mantener un código limpio, escalable y mantenible (siguiendo estándares de validación W3C), los estilos CSS se dividieron en **módulos dentro de la carpeta `static/css/modules/`**:
+* **`layout.css`:** Contiene los estilos estructurales, variables CSS globales, navegación, tarjetas de avistamientos y reglas de maquetación responsive.
+* **`forms.css`:** Define el diseño de formularios, selecciones, botones, mensajes y alertas de error.
+* **`dashboard.css`:** Modula la grilla y los contenedores de tarjetas para las métricas y gráficos.
 
-La logica en `indexFilter.js` trabaja sobre nodos del DOM ya cargados, evitando recargas de pagina.
+### 5. Paginación, Ordenamiento y Dashboard Interactivo
+* **Paginación Personalizada:** La clase `Paginador` en `db.py` realiza consultas eficientes a MySQL usando `OFFSET` y `LIMIT`.
+* **Filtros de Ordenamiento:** La vista `listAvistamientos.html` permite ordenar los resultados dinámicamente por fecha (ascendente/descendente), lugar o nombre de ave.
+* **Métricas (`dashboard.js`):** Integra la librería Chart.js para renderizar gráficos dinámicos e interactivos en la vista `/dashboard` (distribución de voluntarios por región y tendencia de avistamientos).
 
-## 6) Dashboard de metricas
-`dashboard.html` usa Chart.js para mostrar indicadores de voluntarios y avistamientos. Los estilos de esta vista se movieron a `css/modules/dashboard.css` para evitar CSS embebido en HTML.
+---
+
+## Estructura del Proyecto
+
+```text
+.
+├── app.py                     # Controlador Flask con la lógica de rutas y sesiones
+├── db.py                      # Modelos SQLAlchemy, conexión a MySQL y funciones CRUD
+├── static/
+│   ├── css/
+│   │   ├── styles.css         # CSS principal que importa los módulos
+│   │   └── modules/           # Módulos de diseño estructurados
+│   │       ├── layout.css     # Estructura global, header, nav, tarjetas y listados
+│   │       ├── forms.css      # Estilos de formularios, inputs, leyendas y mensajes
+│   │       └── dashboard.css  # Diseño de tarjetas y layout para métricas
+│   ├── js/
+│   │   ├── singUpVal.js       # Validación JS de voluntario y carga AJAX de comunas
+│   │   ├── avistamientoVal.js # Validación JS de formulario de avistamiento
+│   │   └── dashboard.js       # Visualización de gráficos interactivas con Chart.js
+│   └── uploads/               # Carpeta para archivos multimedia subidos por los usuarios
+└── templates/
+    ├── base.html              # Plantilla base con navbar y estado de sesión
+    ├── index.html             # Portada con resumen de los últimos 2 avistamientos
+    ├── login.html             # Formulario de registro de voluntario
+    ├── exitoLogin.html        # Confirmación de registro con opciones de navegación
+    ├── avistamiento.html      # Formulario para publicar nuevos avistamientos
+    ├── listAvistamientos.html # Listado paginado y ordenable de avistamientos
+    ├── detalleAvistamiento.html # Vista detallada del avistamiento con multimedia
+    └── dashboard.html         # Panel con métricas y gráficos del proyecto
+```
