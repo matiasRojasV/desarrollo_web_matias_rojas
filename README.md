@@ -1,4 +1,4 @@
-# Tarea 2 - CC5002 Desarrollo de Aplicaciones Web
+# Tarea 3 - CC5002 Desarrollo de Aplicaciones Web
 
 Este proyecto corresponde al desarrollo de la **Tarea 2** para la Unión de Ornitólogos de Chile. Consiste en la evolución del prototipo frontend desarrollado en la Tarea 1 hacia una aplicación web dinámica funcional construida con **Python (Flask)**, **SQLAlchemy ORM** y **MySQL**.
 
