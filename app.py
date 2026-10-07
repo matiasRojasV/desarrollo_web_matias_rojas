@@ -196,5 +196,31 @@ def dashboard():
     return render_template('dashboard.html')
 
 
+@app.route('/api/estadisticas')
+def api_estadisticas():
+    # Obtenemos los datos desde db.py
+    avistamientos_dia = obtener_avistamientos_por_dia()
+    avistamientos_ave = obtener_avistamientos_por_ave()
+    voluntarios_comuna = obtener_voluntarios_por_comuna()
+
+    # Formateamos los datos para enviarlos al frontend
+    data = {
+        'dias': {
+            'labels': [str(d[0]) for d in avistamientos_dia],
+            'valores': [d[1] for d in avistamientos_dia]
+        },
+        'aves': {
+            'labels': [a[0] for a in avistamientos_ave],
+            'valores': [a[1] for a in avistamientos_ave]
+        },
+        'comunas': {
+            'labels': [c[0] for c in voluntarios_comuna],
+            'valores': [c[1] for c in voluntarios_comuna]
+        }
+    }
+    
+    return jsonify(data)
+
+
 if __name__ == '__main__':
     app.run(debug=True)

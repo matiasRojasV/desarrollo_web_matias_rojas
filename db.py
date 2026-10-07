@@ -121,7 +121,6 @@ def obtener_avistamientos_paginados(page=1, per_page=4, orden='fecha-desc'):
 
 
 def obtener_avistamientos_por_dia():
-    # Extraemos solo la fecha
     return db_session.query(
         func.date(Avistamiento.fecha_hora).label('fecha'), 
         func.count(Avistamiento.id)
