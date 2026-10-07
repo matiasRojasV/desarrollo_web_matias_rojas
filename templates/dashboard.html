@@ -1,21 +1,34 @@
 {% extends "base.html" %}
-{% block title %}Métricas - Aves en Chile{% endblock %}
+{% block title %}Estadísticas - Aves en Chile{% endblock %}
 {% block content %}
 
 <main class="dashboard-main">
-    <h2>Dashboard de Métricas</h2>
-    <p>Visualización del registro de voluntarios y avistamientos.</p>
+    <h2>Estadísticas del Sistema</h2>
+    <p>Visualización interactiva de los registros.</p>
 
     <div class="graficos-grid">
+        <!-- Avistamientos por dia (Líneas) -->
         <div class="grafico-card">
-            <h3>Voluntarios Registrados por Región</h3>
-            <canvas id="chart-voluntarios-region"></canvas>
+            <h3>Avistamientos por Día</h3>
+            <canvas id="chart-avistamientos-dia"></canvas>
         </div>
 
+        <!-- Avistamientos por ave (Torta) -->
         <div class="grafico-card">
-            <h3>Avistamientos Registrados</h3>
-            <canvas id="chart-avistamientos-registrados"></canvas>
+            <h3>Avistamientos por Tipo de Ave</h3>
+            <canvas id="chart-avistamientos-ave"></canvas>
         </div>
+
+        <!-- Voluntarios por comuna (Barras) -->
+        <div class="grafico-card">
+            <h3>Voluntarios Registrados por Comuna</h3>
+            <canvas id="chart-voluntarios-comuna"></canvas>
+        </div>
+    </div>
+
+    <!-- Enlace para volver a la portada -->
+    <div style="text-align: center; margin-top: 30px;">
+        <a href="{{ url_for('index') }}" class="btn-volver">Volver a la portada</a>
     </div>
 </main>
 {% endblock %}
