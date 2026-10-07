@@ -1,73 +1,71 @@
 document.addEventListener('DOMContentLoaded', () => {
     
-    // Gráfico de Voluntarios Registrados por Región
-    const ctxVoluntarios = document.getElementById('chart-voluntarios-region')?.getContext('2d');
-    if (ctxVoluntarios) {
-        new Chart(ctxVoluntarios, {
-            type: 'bar',
-            data: {
-                labels: [
-                    'Metropolitana',
-                    'Valparaíso',
-                    'Biobío',
-                    'Araucanía',
-                    'Coquimbo',
-                    'Los Lagos'
-                ],
-                datasets: [{
-                    label: 'Voluntarios Registrados',
-                    data: [52, 34, 27, 19, 14, 10],
-                    backgroundColor: '#3498db',
-                    borderColor: '#2980b9',
-                    borderWidth: 1,
-                    borderRadius: 4
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { display: false }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: { stepSize: 10 }
-                    }
-                }
+    // Llamada asíncrona (fetch) para obtener los datos desde Flask
+    fetch('/api/estadisticas')
+        .then(response => response.json())
+        .then(data => {
+            
+            // Gráfico de Avistamientos por Día (Líneas)
+            const ctxDia = document.getElementById('chart-avistamientos-dia')?.getContext('2d');
+            if (ctxDia) {
+                new Chart(ctxDia, {
+                    type: 'line',
+                    data: {
+                        labels: data.dias.labels,
+                        datasets: [{
+                            label: 'Avistamientos',
+                            data: data.dias.valores,
+                            borderColor: '#2ecc71',
+                            backgroundColor: 'rgba(46, 204, 113, 0.15)',
+                            fill: true,
+                            tension: 0.3
+                        }]
+                    },
+                    options: { responsive: true, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+                });
             }
-        });
-    }
 
-    // Gráfico de Avistamientos Registrados
-    const ctxAvistamientos = document.getElementById('chart-avistamientos-registrados')?.getContext('2d');
-    if (ctxAvistamientos) {
-        new Chart(ctxAvistamientos, {
-            type: 'line',
-            data: {
-                labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto'],
-                datasets: [{
-                    label: 'Avistamientos Registrados',
-                    data: [15, 28, 42, 35, 50, 68, 75, 90],
-                    borderColor: '#2ecc71',
-                    backgroundColor: 'rgba(46, 204, 113, 0.15)',
-                    fill: true,
-                    tension: 0.3,
-                    pointRadius: 5,
-                    pointBackgroundColor: '#27ae60'
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { display: false }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
+            // Gráfico de Avistamientos por Tipo de Ave (Torta)
+            const ctxAve = document.getElementById('chart-avistamientos-ave')?.getContext('2d');
+            if (ctxAve) {
+                new Chart(ctxAve, {
+                    type: 'pie',
+                    data: {
+                        labels: data.aves.labels,
+                        datasets: [{
+                            data: data.aves.valores,
+                            backgroundColor: ['#e74c3c', '#3498db', '#f1c40f', '#9b59b6', '#e67e22', '#1abc9c']
+                        }]
+                    },
+                    options: { responsive: true }
+                });
             }
-        });
-    }
 
+            // Gráfico de Voluntarios por Comuna (Barras)
+            const ctxComuna = document.getElementById('chart-voluntarios-comuna')?.getContext('2d');
+            if (ctxComuna) {
+                new Chart(ctxComuna, {
+                    type: 'bar',
+                    data: {
+                        labels: data.comunas.labels,
+                        datasets: [{
+                            label: 'Voluntarios Registrados',
+                            data: data.comunas.valores,
+                            backgroundColor: '#3498db',
+                            borderColor: '#2980b9',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: { legend: { display: false } },
+                        scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+                    }
+                });
+            }
+
+        })
+        .catch(error => {
+            console.error("Error al cargar las estadísticas:", error);
+        });
 });
