@@ -163,6 +163,27 @@ main.form {
     color: var(--primary);
 }
 
+.btn-submit,
+button[type="submit"] {
+    background-color: var(--primary);
+    color: #ffffff;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    align-self: flex-start;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-submit:hover,
+button[type="submit"]:hover {
+    background-color: var(--accent);
+}
+
 /* 4. LISTADOS Y TARJETAS DE AVES */
 .filtros-section {
     background-color: #fafafa;
