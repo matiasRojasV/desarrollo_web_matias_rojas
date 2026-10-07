@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, Text, ForeignKey
+from sqlalchemy import create_engine, Column, Integer, String, DateTime, Text, ForeignKey, func
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship, scoped_session
 from datetime import datetime
 
@@ -118,6 +118,28 @@ def obtener_avistamientos_paginados(page=1, per_page=4, orden='fecha-desc'):
         query = query.order_by(Avistamiento.fecha_hora.desc())
 
     return Paginador(query, page=page, per_page=per_page)
+
+
+def obtener_avistamientos_por_dia():
+    # Extraemos solo la fecha
+    return db_session.query(
+        func.date(Avistamiento.fecha_hora).label('fecha'), 
+        func.count(Avistamiento.id)
+    ).group_by(func.date(Avistamiento.fecha_hora)).order_by('fecha').all()
+
+
+def obtener_avistamientos_por_ave():
+    return db_session.query(
+        Ave.nombre, 
+        func.count(Avistamiento.id)
+    ).join(Avistamiento).group_by(Ave.nombre).all()
+
+
+def obtener_voluntarios_por_comuna():
+    return db_session.query(
+        Comuna.nombre, 
+        func.count(Voluntario.id)
+    ).join(Voluntario).group_by(Comuna.nombre).all()
 
 
 # Funciones escritura
