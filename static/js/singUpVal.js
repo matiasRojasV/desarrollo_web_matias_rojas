@@ -72,14 +72,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Renderizado de errores o confirmación
         if (errores.length > 0) {
+            const div = document.createElement('div');
+            div.className = 'alerta-error';
+
             const ul = document.createElement('ul');
-            ul.style.color = 'red';
             errores.forEach(err => {
                 const li = document.createElement('li');
                 li.textContent = err;
                 ul.appendChild(li);
             });
-            contenedorErrores.appendChild(ul);
+
+            div.appendChild(ul);
+            contenedorErrores.appendChild(div);
         } else {
             localStorage.setItem('voluntarioRegistrado', 'true');
             localStorage.setItem('nombreVoluntario', nombre);

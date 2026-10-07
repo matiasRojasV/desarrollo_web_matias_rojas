@@ -39,14 +39,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (errores.length > 0) {
+            const div = document.createElement('div');
+            div.className = 'alerta-error';
+
             const ul = document.createElement('ul');
-            ul.style.color = 'red';
             errores.forEach(err => {
                 const li = document.createElement('li');
                 li.textContent = err;
                 ul.appendChild(li);
             });
-            contenedorErrores.appendChild(ul);
+
+            div.appendChild(ul);
+            contenedorErrores.appendChild(div);
         } else {
             event.target.submit();
         }
