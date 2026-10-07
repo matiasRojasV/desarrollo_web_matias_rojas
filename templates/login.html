@@ -6,16 +6,19 @@
     <h2>Formulario de Registro de Voluntarios</h2>
     <p>Los campos marcados con (*) son obligatorios.</p>
 
-    <!-- Contenedor para mostrar los errores de validacion -->
+    <!-- Contenedor para mostrar los errores de validación -->
     <div id="mensajes-error" role="alert">
         {% if errores %}
-            <ul style="color: red;">
-                {% for error in errores %}
-                    <li>{{ error }}</li>
-                {% endfor %}
-            </ul>
+            <div class="alerta-error">
+                <ul>
+                    {% for error in errores %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
         {% endif %}
     </div>
+
 
     <form id="form-voluntario"  action="{{ url_for('login') }}" method="post">
         <fieldset>
