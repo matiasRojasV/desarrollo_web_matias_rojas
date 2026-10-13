@@ -222,5 +222,49 @@ def api_estadisticas():
     return jsonify(data)
 
 
+@app.route('/api/comentarios', methods=['POST'])
+def api_agregar_comentario():
+    # Recibir los datos enviados desde JS
+    data = request.get_json()
+    
+    nombre = data.get('nombre', '').strip()
+    texto = data.get('texto', '').strip()
+    avistamiento_id = data.get('avistamiento_id')
+
+    errores = []
+
+    # Validaciones del servidor
+    if not nombre or len(nombre) < 3 or len(nombre) > 50:
+        errores.append("El nombre del comentarista debe tener entre 3 y 50 caracteres.")
+    
+    if not texto or len(texto) < 5:
+        errores.append("El texto del comentario es obligatorio y debe tener al menos 5 caracteres.")
+        
+    if not avistamiento_id:
+         errores.append("Error de asociación de avistamiento.")
+
+    if errores:
+        # Retornamos los errores con un código 400 (Bad Request)
+        return jsonify({'status': 'error', 'mensajes': errores}), 400
+
+    try:
+        # Guardar en base de datos si pasa validaciones
+        nuevo_comentario = crear_comentario(nombre, texto, avistamiento_id)
+        
+        return jsonify({
+            'status': 'exito', 
+            'mensaje': 'Comentario agregado exitosamente.',
+            'comentario': {
+                'nombre': nuevo_comentario.nombre,
+                'texto': nuevo_comentario.texto,
+                'fecha': nuevo_comentario.fecha.strftime('%d/%m/%Y %H:%M')
+            }
+        })
+    except Exception as e:
+        print(e)
+        return jsonify({'status': 'error', 'mensajes': ["Error interno al guardar el comentario."]}), 500
+
+
+
 if __name__ == '__main__':
     app.run(debug=True)
