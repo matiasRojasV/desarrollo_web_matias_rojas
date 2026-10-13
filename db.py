@@ -67,6 +67,17 @@ class Registro(Base):
     avistamiento = relationship('Avistamiento', backref='registros')
 
 
+class Comentario(Base):
+    __tablename__ = 'comentario'
+    id = Column(Integer, primary_key=True)
+    nombre = Column(String(80), nullable=False)
+    texto = Column(String(300), nullable=False)
+    fecha = Column(DateTime, default=datetime.now)
+    avistamiento_id = Column(Integer, ForeignKey('avistamiento.id'), nullable=False)
+    
+    avistamiento = relationship('Avistamiento', backref='comentarios')
+
+
 # Paginador
 class Paginador:
     def __init__(self, query, page, per_page):
@@ -78,6 +89,8 @@ class Paginador:
         self.has_next = page < self.pages
         self.prev_num = page - 1
         self.next_num = page + 1
+
+
 
 
 # Funciones lecturas
@@ -190,6 +203,22 @@ def crear_avistamiento(fecha_hora, lugar, descripcion, ave_id, voluntario_id, no
 
         return nuevo_avistamiento
         
+    except Exception as e:
+        db_session.rollback()
+        raise e
+
+
+def crear_comentario(nombre, texto, avistamiento_id):
+    """Inserta un nuevo comentario asociado a un avistamiento."""
+    try:
+        nuevo_comentario = Comentario(
+            nombre=nombre,
+            texto=texto,
+            avistamiento_id=avistamiento_id
+        )
+        db_session.add(nuevo_comentario)
+        db_session.commit()
+        return nuevo_comentario
     except Exception as e:
         db_session.rollback()
         raise e
