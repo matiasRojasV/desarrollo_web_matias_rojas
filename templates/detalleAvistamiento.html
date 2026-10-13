@@ -25,5 +25,64 @@
             {% endfor %}
         </div>
     </div>
+
+    <!-- Sección de Comentarios -->
+    <section class="seccion-comentarios">
+        
+        <!-- Formulario Comentario -->
+        <div class="form-comentario-container">
+            
+            <!-- Contenedor para mostrar los errores -->
+            <div id="errores-comentario" role="alert"></div>
+
+            <form id="form-comentario">
+                <!-- ID oculto para enviarlo por JS -->
+                <input type="hidden" id="avistamiento_id" value="{{ avistamiento.id }}">
+                
+                <fieldset>
+                    <legend>Agregar un comentario</legend>
+                    <p>
+                        <label for="nombre_comentario">Nombre del comentarista (*):</label>
+                        <input type="text" id="nombre_comentario" placeholder="Tu nombre" minlength="3" maxlength="50">
+                    </p>
+                    <p>
+                        <label for="texto_comentario">Comentario (*):</label>
+                        <textarea id="texto_comentario" rows="3" cols="40" placeholder="Escribe tu comentario aquí..." minlength="5"></textarea>
+                    </p>
+                    <button type="submit" class="btn-submit">Agregar comentario</button>
+
+                </fieldset>
+                
+            </form>
+        </div>
+        
+        <h3>Comentarios</h3>
+        <!-- Listado de comentarios -->
+        <div id="contenedor-comentarios">
+            {% if avistamiento.comentarios %}
+                <ul id="lista-comentarios" class="lista-comentarios">
+                {% for comentario in avistamiento.comentarios %}
+                    <li class="comentario-item">
+                        <div class="comentario-header">
+                            <strong>{{ comentario.nombre }}</strong>
+                            <span>{{ comentario.fecha.strftime('%d/%m/%Y %H:%M') }}</span>
+                        </div>
+                        <p class="comentario-texto">{{ comentario.texto }}</p>
+                    </li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <p id="sin-comentarios">Aún no hay comentarios. ¡Sé el primero en comentar!</p>
+                <!-- Lista vacía oculta lista para recibir los nuevos vía JS -->
+                <ul id="lista-comentarios" class="lista-comentarios"></ul>
+            {% endif %}
+        </div>
+
+        
+    </section>
 </main>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/comentarios.js') }}"></script>
 {% endblock %}
