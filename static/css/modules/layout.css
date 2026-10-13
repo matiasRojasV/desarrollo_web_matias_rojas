@@ -293,3 +293,52 @@ button[type="submit"]:hover {
     object-fit: cover;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
+
+/* 6. COMENTARIOS */
+.seccion-comentarios {
+    margin-top: 3rem;
+    background-color: #fafafa;
+    padding: 2rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+}
+
+.seccion-comentarios h3 {
+    color: var(--primary);
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 0.5rem;
+}
+
+.lista-comentarios {
+    list-style: none;
+    margin-bottom: 2rem;
+}
+
+.comentario-item {
+    background-color: var(--card-bg);
+    padding: 1rem 1.5rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.comentario-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.comentario-header strong {
+    color: var(--primary);
+    font-size: 1rem;
+}
+
+.form-comentario-container h4 {
+    margin-bottom: 1rem;
+    color: var(--primary);
+}
