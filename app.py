@@ -244,7 +244,7 @@ def api_agregar_comentario():
          errores.append("Error de asociación de avistamiento.")
 
     if errores:
-        # Retornamos los errores con un código 400 (Bad Request)
+        # Retornamos los errores con un código 400
         return jsonify({'status': 'error', 'mensajes': errores}), 400
 
     try:

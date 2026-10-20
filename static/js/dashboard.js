@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     
-    // Llamada asíncrona (fetch) para obtener los datos desde Flask
+    // Llamada asíncrona para obtener los datos desde Flask
     fetch('/api/estadisticas')
         .then(response => response.json())
         .then(data => {

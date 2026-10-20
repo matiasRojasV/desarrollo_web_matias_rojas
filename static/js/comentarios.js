@@ -16,7 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const texto = document.getElementById('texto_comentario').value.trim();
         const avistamientoId = document.getElementById('avistamiento_id').value;
 
-        // Validaciones en el lado del cliente (Requisito T3)
         if (nombre.length < 3 || nombre.length > 50) {
             errores.push("El nombre debe tener entre 3 y 50 caracteres.");
         }
@@ -46,10 +45,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
 
             if (!response.ok) {
-                // Si Flask nos devolvió un error (ej. validación backend)
+                // Si Flask nos devolvió un error
                 mostrarErrores(data.mensajes || ["Error al procesar el comentario"]);
             } else {
-                // Éxito: Ocultamos el mensaje de "sin comentarios" si existía
+                // Éxito: Ocultamos el mensaje de "sin comentarios"
                 if (msjSinComentarios) {
                     msjSinComentarios.style.display = 'none';
                 }
@@ -75,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Función auxiliar para renderizar los errores con tu diseño estándar
+    // Función para renderizar los errores
     function mostrarErrores(erroresArreglo) {
         const div = document.createElement('div');
         div.className = 'alerta-error';

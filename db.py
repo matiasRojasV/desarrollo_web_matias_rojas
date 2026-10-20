@@ -91,8 +91,6 @@ class Paginador:
         self.next_num = page + 1
 
 
-
-
 # Funciones lecturas
 def obtener_ultimos_avistamientos(limit=2):
     return db_session.query(Avistamiento).order_by(Avistamiento.id.desc()).limit(limit).all()
