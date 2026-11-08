@@ -1,113 +1,79 @@
-# Tarea 3 - CC5002 Desarrollo de Aplicaciones Web
+# Tarea 4 - Unión de Ornitólogos de Chile
 
-Este proyecto corresponde al desarrollo de la **Tarea 3** para la Unión de Ornitólogos de Chile. Consiste en la evolución de las entregas anteriores hacia una aplicación web dinámica funcional construida con **Python (Flask)**, **SQLAlchemy ORM** y **MySQL**.
+La aplicación de esta entrega está en [`tarea4/`](./tarea4/). Está implementada con **Java 17+, Spring Boot, Thymeleaf, Spring Data JPA y MySQL**. El código Flask de la raíz corresponde a las tareas anteriores; para la Tarea 4 se debe ejecutar exclusivamente el proyecto Spring Boot.
 
-En esta iteración se incorporan funcionalidades asíncronas (AJAX/Fetch) para la carga de estadísticas dinámicas y un sistema interactivo de comentarios en tiempo real para los avistamientos. La aplicación permite registrar voluntarios, reportar avistamientos acompañados de archivos multimedia, consultar avistamientos, interactuar con comentarios y visualizar métricas.
+## Requisitos
 
----
+- Java 17 o superior.
+- MySQL iniciado y accesible desde la aplicación.
+- Maven Wrapper incluido en `tarea4/`.
 
-## Requisitos del Sistema y Configuración
+## Preparar la base de datos
 
-### 1. Requisitos
-* **Python:** versión 3.8 o superior.
-* **MySQL Server:** en ejecución en `localhost:3306`.
-* **Librerías de Python:** Flask, SQLAlchemy, PyMySQL y Werkzeug
+La aplicación usa el esquema `tarea2` y tiene `spring.jpa.hibernate.ddl-auto=none`: **JPA no crea ni modifica las tablas automáticamente**. Para una base de datos nueva, ejecutar los scripts en este orden:
 
-### 2. Base de Datos
-1. Asegurarse de que el servicio MySQL esté activo en el puerto `3306`.
-2. Crear la base de datos `tarea2` y el usuario requerido ejecutando las siguientes credenciales:
-   * **Host:** `localhost`
-   * **Puerto:** `3306`
-   * **Base de datos:** `tarea2`
-   * **Usuario:** `cc5002`
-   * **Contraseña:** `programacionweb`
-3. Cargar los scripts SQL en el siguiente orden estricto dentro de la carpeta `SQL/`:
-   1. `tarea2.sql` (Estructura de tablas principales)
-   2. `region-comuna.sql` (Poblado de regiones y comunas)
-   3. `aves.sql` (Catálogo nacional de aves)
-   4. `tabla-comentario.sql` (Nueva tabla para el sistema de comentarios)
+1. [`SQL/tarea2.sql`](./SQL/tarea2.sql): crea el esquema y las tablas principales.
+2. [`SQL/region-comuna.sql`](./SQL/region-comuna.sql): carga regiones y comunas.
+3. [`SQL/aves.sql`](./SQL/aves.sql): carga el catálogo de aves.
+4. [`SQL/tabla-comentario.sql`](./SQL/tabla-comentario.sql): crea la tabla de comentarios.
+5. [`SQL/tabla-nota.sql`](./SQL/tabla-nota.sql): crea la tabla para las evaluaciones.
 
----
+**Importante:** `tarea2.sql` elimina y vuelve a crear el esquema `tarea2`. No lo ejecutes sobre una base de datos con información que quieras conservar. Si ya tienes las tablas base pero ves un error de que no existe `nota` o `comentario`, ejecuta únicamente el script correspondiente.
 
-## Instrucciones de Ejecución
+El usuario predeterminado de MySQL es `cc5002`, con contraseña `programacionweb`, según la configuración de los scripts SQL. Si tu instalación tiene otros datos, configura estas variables antes de ejecutar:
 
-1. Clonar el repositorio y cambiarse a la rama `Tarea 3`:
-   ```bash
-   git switch "Tarea 3"
-   ```
-   
-2. Creación de entorno virtual e instalación de requerimientos:
-   ```bash
-   python -m venv .venv
-   . .venv/bin/activate
-   pip install -r requirements.txt
-   ```
+| Variable | Valor predeterminado |
+|---|---|
+| `DB_URL` | `jdbc:mysql://localhost:3306/tarea2?useUnicode=true&characterEncoding=utf8&serverTimezone=America/Santiago` |
+| `DB_USERNAME` | `cc5002` |
+| `DB_PASSWORD` | `programacionweb` |
+| `UPLOAD_DIR` | `../static/uploads` (relativa a `tarea4/`) |
 
-3. Iniciar la aplicación Flask:
-   ```bash
-   python app.py
-   ```
-4. Acceder mediante el navegador a: [http://127.0.0.1:5000](http://127.0.0.1:5000)
+## Ejecutar la aplicación
 
----
+Desde la raíz del repositorio:
 
-## Decisiones de Diseño e Implementación
-
-### 1. Sistema Asíncrono de Estadísticas y Gráficos
-Para la generación de los gráficos requeridos en el Dashboard, se utilizó la biblioteca externa **Chart.js**. 
-* **Obtención de Datos:** En el lado del cliente, `dashboard.js` hace uso de la API `fetch` nativa de JavaScript para realizar una petición HTTP GET a la ruta `/api/estadisticas` del servidor de Flask.
-* **Separación de Lógica:** Las consultas complejas (agrupación de avistamientos por día, por tipo de ave y voluntarios por comuna) se mantuvieron estrictamente en `db.py` utilizando las funciones de agregación `func.count` y `func.date` de SQLAlchemy. Flask formatea estos datos y los devuelve como JSON puro para que Chart.js los renderice sin recargar la vista.
-
-### 2. Sistema Interactivo de Comentarios
-Se implementó un flujo de comentarios asíncrono en la vista de detalle de los avistamientos.
-* **Doble Validación:** Al igual que en los demás formularios, se aplican estrictas validaciones en el lado del cliente (mediante `comentarios.js`) verificando longitudes mínimas y máximas de los textos. Posteriormente, en el servidor (ruta `/api/comentarios`), se repiten las validaciones y se limpian las cadenas con `.strip()` para proteger la base de datos contra peticiones maliciosas.
-* **Manipulación del DOM:** Si el comentario supera las validaciones en el backend, la inserción se realiza de forma asíncrona mediante `fetch`. Con la respuesta exitosa, JavaScript inyecta directamente un nuevo elemento `<li>` en el listado de comentarios actual, brindando una experiencia de usuario instantánea y fluida.
-
-### 3. Registro de Voluntarios y Manejo de Sesión
-* Al registrar exitosamente un voluntario, se guardan credenciales nativas en `session` y se protege la ruta de avistamientos para usuarios no autenticados.
-* La fecha de registro y los comentarios se calculan en el servidor usando `datetime.now()`.
-
-### 4. Almacenamiento Multimedia y Manejo Transaccional
-* Admite subida de múltiples archivos validados y saneados con `secure_filename` de Werkzeug. Si ocurre un error en la transacción hacia la base de datos, existe un mecanismo de "Rollback" que se encarga de eliminar físicamente los archivos residuales.
-
-### 5. Arquitectura CSS Modular y Estandarizada
-Los estilos CSS están divididos por responsabilidades en `static/css/modules/` (`layout.css`, `forms.css`, `dashboard.css`). Para esta entrega, se universalizó la clase `.btn-submit` y `.alerta-error` logrando que los formularios dinámicos (como el de comentarios) hereden exactamente el mismo diseño que los estáticos.
-
----
-
-## Estructura del Proyecto
-
-```text
-.
-├── app.py                     # Controlador Flask
-├── db.py                      # Modelos SQLAlchemy, conexión a MySQL
-├── README.md                  # Documentación del proyecto
-├── requirements.txt           # Dependencias del proyecto Python
-├── SQL/                       # Scripts para la base de datos
-│   ├── aves.sql
-│   ├── region-comuna.sql
-│   ├── tabla-comentario.sql   # Modelo físico de la tabla de comentarios
-│   └── tarea2.sql
-├── static/
-│   ├── css/
-│   │   ├── styles.css         # CSS principal que agrupa importaciones
-│   │   └── modules/           # Módulos de diseño estructurados
-│   │       ├── dashboard.css  
-│   │       ├── forms.css      
-│   │       └── layout.css     
-│   ├── js/
-│   │   ├── avistamientoVal.js # Validación de formulario de avistamiento
-│   │   ├── comentarios.js     # Lógica asíncrona y validaciones para comentarios
-│   │   ├── dashboard.js       # Consumo asíncrono para Chart.jsmultimedia
-│   │   └── singUpVal.js       # Validación de voluntario y carga AJAX de comunas
-│   └── uploads/               # Archivos multimedia subidos por los usuarios
-└── templates/
-    ├── avistamiento.html      
-    ├── base.html              
-    ├── dashboard.html         
-    ├── detalleAvistamiento.html # Vista detallada con comentarios
-    ├── exitoLogin.html        
-    ├── index.html             
-    ├── listAvistamientos.html 
-    └── login.html             
+```bash
+cd tarea4
+./mvnw spring-boot:run
 ```
+
+En Windows, ejecutar `mvnw.cmd spring-boot:run`. Abre [http://localhost:8080](http://localhost:8080) en el navegador. Si MySQL tiene otra contraseña, define `DB_PASSWORD` en el entorno antes de iniciar Spring Boot.
+
+## Rutas y flujos
+
+### Páginas
+
+| Ruta | Función |
+|---|---|
+| `/` | Portada y últimos avistamientos. |
+| `/login` | Formulario para registrar un voluntario. El registro guarda al voluntario y su sesión; no hay autenticación mediante contraseña. |
+| `/logout` | Cierra la sesión del voluntario. |
+| `/avistamiento` | Formulario para informar un avistamiento; requiere sesión de voluntario y archivos de imagen o video. |
+| `/avistamiento/{id}` | Detalle del avistamiento y comentarios. |
+| `/listAvistamientos` | Listado paginado y ordenable. |
+| `/buscar` | Búsqueda en vivo por ave, voluntario o comuna y evaluación de avistamientos. |
+| `/dashboard` | Gráficos estadísticos. |
+
+### Endpoints asíncronos
+
+| Método y ruta | Función |
+|---|---|
+| `GET /get_comunas/{regionId}` | Carga las comunas de la región seleccionada en el registro. |
+| `GET /api/avistamientos/buscar?q=...` | Busca por nombre de ave, voluntario o comuna y devuelve los datos para los resultados. |
+| `POST /api/notas` | Guarda una nota entera entre 1 y 7 y responde con el promedio actualizado. |
+| `POST /api/comentarios` | Valida y guarda un comentario en la página de detalle. |
+| `GET /api/estadisticas` | Provee los datos para los gráficos del dashboard. |
+
+La búsqueda, las notas, los comentarios, las comunas y las estadísticas usan `fetch` desde JavaScript. Las notas y comentarios se guardan en la base de datos; las notas se vuelven a promediar en cada evaluación. Las validaciones se repiten en el servidor.
+
+## Estructura
+
+- `src/main/java/.../model/`: entidades JPA relacionadas con las tablas de MySQL.
+- `src/main/java/.../repository/`: consultas Spring Data JPA.
+- `src/main/java/.../service/`: operaciones de persistencia y negocio.
+- `src/main/java/.../controller/`: rutas MVC y endpoints JSON.
+- `src/main/resources/templates/`: vistas Thymeleaf.
+- `src/main/resources/static/`: CSS y JavaScript del navegador.
+
+La configuración específica de Spring Boot está en [`tarea4/src/main/resources/application.properties`](./tarea4/src/main/resources/application.properties).
