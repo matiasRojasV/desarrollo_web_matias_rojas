@@ -1,21 +1,21 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{base :: layout(~{::title}, ~{::main}, ~{::scripts})}">
-<head><title>Estadísticas - Aves en Chile</title></head>
-<body>
-<main class="dashboard-main">
-    <h2>Estadísticas del Sistema</h2>
-    <p>Visualización interactiva de los registros.</p>
-    <div class="graficos-grid">
-        <div class="grafico-card"><h3>Avistamientos por Día</h3><canvas id="chart-avistamientos-dia"></canvas></div>
-        <div class="grafico-card"><h3>Avistamientos por Tipo de Ave</h3><canvas id="chart-avistamientos-ave"></canvas></div>
-        <div class="grafico-card"><h3>Voluntarios Registrados por Comuna</h3><canvas id="chart-voluntarios-comuna"></canvas></div>
-    </div>
-    <p><a th:href="@{/}" class="btn-submit">Volver a la portada</a></p>
-</main>
-<th:block th:fragment="scripts">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script th:src="@{/js/dashboard.js}"></script>
-</th:block>
-</body>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{base :: layout(~{::title}, ~{::main}, ~{::scripts})}">
+    <head><title>Estadísticas - Aves en Chile</title></head>
+    <body>
+        <main class="dashboard-main">
+            <h2>Estadísticas del Sistema</h2>
+            <p>Visualización interactiva de los registros.</p>
+            <div class="graficos-grid">
+                <div class="grafico-card"><h3>Avistamientos por Día</h3><canvas id="chart-avistamientos-dia"></canvas></div>
+                <div class="grafico-card"><h3>Avistamientos por Tipo de Ave</h3><canvas id="chart-avistamientos-ave"></canvas></div>
+                <div class="grafico-card"><h3>Voluntarios Registrados por Comuna</h3><canvas id="chart-voluntarios-comuna"></canvas></div>
+            </div>
+            <p><a th:href="@{/}" class="btn-submit">Volver a la portada</a></p>
+        </main>
+        
+        <th:block th:fragment="scripts">
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script th:src="@{/js/dashboard.js}"></script>
+        </th:block>
+    </body>
 </html>

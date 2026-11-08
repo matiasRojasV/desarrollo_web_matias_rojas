@@ -1,56 +1,59 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{base :: layout(~{::title}, ~{::main}, ~{::scripts})}">
-<head><title>Detalle del Avistamiento - Aves en Chile</title></head>
-<body>
-<main>
-    <h2>Avistamiento: <span th:text="${avistamiento.ave.nombre}"></span></h2>
-    <div class="detalle-columnas">
-        <div class="info-detalle">
-            <p><strong>Registrado por:</strong> <span th:text="${avistamiento.voluntario.nombre}"></span></p>
-            <p><strong>Fecha y Hora:</strong> <span th:text="${#temporals.format(avistamiento.fecha_hora, 'dd/MM/yyyy - HH:mm')}"></span> hrs</p>
-            <p><strong>Lugar:</strong> <span th:text="${avistamiento.lugar}"></span></p>
-            <p><strong>Descripción:</strong> <span th:text="${avistamiento.descripcion == null or avistamiento.descripcion.isBlank() ? 'Sin descripción adicional.' : avistamiento.descripcion}"></span></p>
-            <a th:href="@{/listAvistamientos}" class="btn-submit">Volver al listado</a>
-        </div>
-        <div class="multimedia-container">
-            <h3>Archivos Multimedia</h3>
-            <img th:each="registro : ${avistamiento.registros}"
-                 th:src="@{/uploads/{archivo}(archivo=${registro.nombre_archivo})}"
-                 alt="Imagen del avistamiento">
-            <p th:if="${avistamiento.registros.isEmpty()}">No hay imágenes para este avistamiento.</p>
-        </div>
-    </div>
-    <section class="seccion-comentarios">
-        <div class="form-comentario-container">
-            <div id="errores-comentario" role="alert"></div>
-            <form id="form-comentario">
-                <input type="hidden" id="avistamiento_id" th:value="${avistamiento.id}">
-                <fieldset>
-                    <legend>Agregar un comentario</legend>
-                    <p><label for="nombre_comentario">Nombre del comentarista (*):</label>
-                        <input type="text" id="nombre_comentario" placeholder="Tu nombre" minlength="3" maxlength="50" required></p>
-                    <p><label for="texto_comentario">Comentario (*):</label>
-                        <textarea id="texto_comentario" rows="3" cols="40" minlength="5" maxlength="300" required></textarea></p>
-                    <button type="submit" class="btn-submit">Agregar comentario</button>
-                </fieldset>
-            </form>
-        </div>
-        <h3>Comentarios</h3>
-        <div id="contenedor-comentarios">
-            <p id="sin-comentarios" th:if="${avistamiento.comentarios.isEmpty()}">Aún no hay comentarios. ¡Sé el primero en comentar!</p>
-            <ul id="lista-comentarios" class="lista-comentarios">
-                <li class="comentario-item" th:each="comentario : ${avistamiento.comentarios}">
-                    <div class="comentario-header">
-                        <strong th:text="${comentario.nombre}"></strong>
-                        <span th:text="${#temporals.format(comentario.fecha, 'dd/MM/yyyy HH:mm')}"></span>
-                    </div>
-                    <p class="comentario-texto" th:text="${comentario.texto}"></p>
-                </li>
-            </ul>
-        </div>
-    </section>
-</main>
-<th:block th:fragment="scripts"><script th:src="@{/js/comentarios.js(v=3)}"></script></th:block>
-</body>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{base :: layout(~{::title}, ~{::main}, ~{::scripts})}">
+    <head><title>Detalle del Avistamiento - Aves en Chile</title></head>
+    
+    <body>
+        <main>
+            <h2>Avistamiento: <span th:text="${avistamiento.ave.nombre}"></span></h2>
+            <div class="detalle-columnas">
+                <div class="info-detalle">
+                    <p><strong>Registrado por:</strong> <span th:text="${avistamiento.voluntario.nombre}"></span></p>
+                    <p><strong>Fecha y Hora:</strong> <span th:text="${#temporals.format(avistamiento.fecha_hora, 'dd/MM/yyyy - HH:mm')}"></span> hrs</p>
+                    <p><strong>Lugar:</strong> <span th:text="${avistamiento.lugar}"></span></p>
+                    <p><strong>Descripción:</strong> <span th:text="${avistamiento.descripcion == null or avistamiento.descripcion.isBlank() ? 'Sin descripción adicional.' : avistamiento.descripcion}"></span></p>
+                    <a th:href="@{/listAvistamientos}" class="btn-submit">Volver al listado</a>
+                </div>
+                <div class="multimedia-container">
+                    <h3>Archivos Multimedia</h3>
+                    <img th:each="registro : ${avistamiento.registros}"
+                        th:src="@{/uploads/{archivo}(archivo=${registro.nombre_archivo})}"
+                        alt="Imagen del avistamiento">
+                    <p th:if="${avistamiento.registros.isEmpty()}">No hay imágenes para este avistamiento.</p>
+                </div>
+            </div>
+
+            <section class="seccion-comentarios">
+                <div class="form-comentario-container">
+                    <div id="errores-comentario" role="alert"></div>
+                    <form id="form-comentario">
+                        <input type="hidden" id="avistamiento_id" th:value="${avistamiento.id}">
+                        <fieldset>
+                            <legend>Agregar un comentario</legend>
+                            <p><label for="nombre_comentario">Nombre del comentarista (*):</label>
+                                <input type="text" id="nombre_comentario" placeholder="Tu nombre" minlength="3" maxlength="50" required></p>
+                            <p><label for="texto_comentario">Comentario (*):</label>
+                                <textarea id="texto_comentario" rows="3" cols="40" minlength="5" maxlength="300" required></textarea></p>
+                            <button type="submit" class="btn-submit">Agregar comentario</button>
+                        </fieldset>
+                    </form>
+                </div>
+                
+                <h3>Comentarios</h3>
+                <div id="contenedor-comentarios">
+                    <p id="sin-comentarios" th:if="${avistamiento.comentarios.isEmpty()}">Aún no hay comentarios. ¡Sé el primero en comentar!</p>
+                    <ul id="lista-comentarios" class="lista-comentarios">
+                        <li class="comentario-item" th:each="comentario : ${avistamiento.comentarios}">
+                            <div class="comentario-header">
+                                <strong th:text="${comentario.nombre}"></strong>
+                                <span th:text="${#temporals.format(comentario.fecha, 'dd/MM/yyyy HH:mm')}"></span>
+                            </div>
+                            <p class="comentario-texto" th:text="${comentario.texto}"></p>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+        </main>
+
+        <th:block th:fragment="scripts"><script th:src="@{/js/comentarios.js(v=3)}"></script></th:block>
+    </body>
 </html>

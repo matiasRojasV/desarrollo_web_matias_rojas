@@ -1,18 +1,20 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{base :: layout(~{::title}, ~{::main}, ~{::scripts})}">
-<head><title>Buscar Avistamientos - Aves en Chile</title></head>
-<body>
-<main>
-    <h2>Buscador de avistamientos</h2>
-    <p>Escribe el nombre del ave, voluntario o comuna.</p>
-    <form id="form-busqueda" role="search">
-        <label for="texto-busqueda">Buscar</label>
-        <input type="text" id="texto-busqueda" autocomplete="off">
-    </form>
-    <div id="mensaje-busqueda" role="status" aria-live="polite"></div>
-    <section id="resultados-busqueda" class="lista-resultados" aria-live="polite"></section>
-</main>
-<th:block th:fragment="scripts"><script th:src="@{/js/busqueda.js}"></script></th:block>
-</body>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{base :: layout(~{::title}, ~{::main}, ~{::scripts})}">
+    <head><title>Buscar Avistamientos - Aves en Chile</title></head>
+
+    <body>
+        <main>
+            <h2>Buscador de avistamientos</h2>
+            <p>Escribe el nombre del ave, voluntario o comuna.</p>
+            <form id="form-busqueda" role="search">
+                <label for="texto-busqueda">Buscar</label>
+                <input type="text" id="texto-busqueda" autocomplete="off">
+            </form>
+            <div id="mensaje-busqueda" role="status" aria-live="polite"></div>
+            <section id="resultados-busqueda" class="lista-resultados" aria-live="polite"></section>
+        </main>
+
+    <th:block th:fragment="scripts"><script th:src="@{/js/busqueda.js}"></script></th:block>
+
+    </body>
 </html>

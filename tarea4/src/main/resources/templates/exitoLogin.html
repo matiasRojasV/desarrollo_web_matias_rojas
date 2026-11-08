@@ -1,13 +1,12 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org"
-      th:replace="~{base :: layout(~{::title}, ~{::main}, ~{::scripts})}">
-<head><title>Registro Exitoso - Aves en Chile</title></head>
-<body>
-<main>
-    <h2>Registro Completado</h2>
-    <p>Gracias por unirte, <strong th:text="${nombre}"></strong>. Tus datos han sido guardados.</p>
-    <p><a th:href="@{/}">Ir al Inicio</a> | <a th:href="@{/avistamiento}">Registrar un Avistamiento</a></p>
-</main>
-<th:block th:fragment="scripts"></th:block>
-</body>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:replace="~{base :: layout(~{::title}, ~{::main}, ~{::scripts})}">
+    <head><title>Registro Exitoso - Aves en Chile</title></head>
+    <body>
+        <main>
+            <h2>Registro Completado</h2>
+            <p>Gracias por unirte, <strong th:text="${nombre}"></strong>. Tus datos han sido guardados.</p>
+            <p><a th:href="@{/}">Ir al Inicio</a> | <a th:href="@{/avistamiento}">Registrar un Avistamiento</a></p>
+        </main>
+        <th:block th:fragment="scripts"></th:block>
+    </body>
 </html>
