@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" th:fragment="layout(pageTitle, pageContent, pageScripts)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:replace="${pageTitle}">Unión de Ornitólogos de Chile</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+    <header>
+        <div id="auth-container">
+            <span class="user-welcome" th:if="${voluntarioId != null}">
+                Hola, <strong th:text="${voluntarioNombre}"></strong>
+            </span>
+            <a th:if="${voluntarioId != null}" th:href="@{/logout}" class="btn-logout">Cerrar Sesión</a>
+            <a th:unless="${voluntarioId != null}" th:href="@{/login}" class="auth-link">Registro / Iniciar Sesión</a>
+        </div>
+        <h1>Unión de Ornitólogos de Chile</h1>
+        <nav aria-label="Navegación principal">
+            <ul>
+                <li><a th:href="@{/}">Inicio</a></li>
+                <li><a th:href="@{/listAvistamientos}">Ver Avistamientos</a></li>
+                <li><a th:href="@{/buscar}">Buscar Avistamientos</a></li>
+                <li><a th:href="@{/avistamiento}">Informar Avistamiento</a></li>
+                <li><a th:href="@{/dashboard}">Métricas</a></li>
+            </ul>
+        </nav>
+    </header>
+    <th:block th:replace="${pageContent}"></th:block>
+    <th:block th:replace="${pageScripts}"></th:block>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{base :: layout(~{::title}, ~{::main}, ~{::scripts})}">
+<head><title>Inicio - Aves en Chile</title></head>
+<body>
+<main>
+    <h2>Bienvenido al Registro Nacional de Avistamientos</h2>
+    <p>Últimos avistamientos reportados por voluntarios en todo el país.</p>
+    <p class="mensaje-exito" role="status" th:if="${mensajeExito != null}" th:text="${mensajeExito}"></p>
+    <div class="contenedor-scroll">
+        <div class="lista-avistamientos">
+            <article class="tarjeta-ave" th:each="avistamiento : ${ultimos_avistamientos}">
+                <img th:if="${!avistamiento.registros.isEmpty()}"
+                     th:src="@{/uploads/{archivo}(archivo=${avistamiento.registros[0].nombre_archivo})}"
+                     th:alt="|Foto de ${avistamiento.ave.nombre}|" width="200">
+                <div class="info-ave">
+                    <h3><a th:href="@{/avistamiento/{id}(id=${avistamiento.id})}" th:text="${avistamiento.ave.nombre}"></a></h3>
+                    <p><strong>Lugar:</strong> <span th:text="${avistamiento.lugar}"></span></p>
+                    <p><strong>Fecha y Hora:</strong>
+                        <span th:text="${#temporals.format(avistamiento.fecha_hora, 'dd/MM/yyyy - HH:mm')}"></span> hrs
+                    </p>
+                    <p><strong>Voluntario:</strong> <span th:text="${avistamiento.voluntario.nombre}"></span></p>
+                    <p th:if="${avistamiento.descripcion != null and !avistamiento.descripcion.isBlank()}"
+                       th:text="${avistamiento.descripcion}"></p>
+                </div>
+            </article>
+            <p th:if="${ultimos_avistamientos.isEmpty()}">Aún no hay avistamientos registrados en el sistema.</p>
+        </div>
+    </div>
+</main>
+<th:block th:fragment="scripts"></th:block>
+</body>
+</html>

@@ -1,0 +1,88 @@
+/* Formularios y mensajes de error */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+fieldset {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.5rem;
+    background-color: #fafafa;
+}
+
+legend {
+    font-weight: 600;
+    color: var(--primary);
+    padding: 0 10px;
+    font-size: 1.1rem;
+}
+
+form p {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1rem;
+}
+
+form p:last-child {
+    margin-bottom: 0;
+}
+
+label {
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+    font-size: 0.95rem;
+}
+
+input[type="text"],
+input[type="date"],
+input[type="time"],
+input[type="file"],
+select {
+    padding: 0.6rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: border-color 0.3s ease;
+    resize: vertical;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+input:disabled,
+select:disabled {
+    background-color: #eeeeee;
+    cursor: not-allowed;
+}
+
+.alerta-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    font-weight: bold;
+    font-size: 1em;
+}
+
+.alerta-error ul {
+    margin: 0;
+    padding-left: 20px;
+    text-align: left;
+}
+
+.alerta-error li {
+    margin-bottom: 5px;
+}
+
+.alerta-error li:last-child {
+    margin-bottom: 0;
+}

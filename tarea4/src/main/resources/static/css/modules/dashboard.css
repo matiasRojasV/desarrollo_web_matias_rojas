@@ -1,0 +1,26 @@
+.dashboard-main {
+    padding: 20px;
+}
+
+.graficos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 25px;
+    margin-top: 20px;
+}
+
+.grafico-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border); 
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.grafico-card h3 {
+    margin-top: 0;
+    color: var(--primary);
+    font-size: 1.1rem;
+    text-align: center;
+    margin-bottom: 15px;
+}

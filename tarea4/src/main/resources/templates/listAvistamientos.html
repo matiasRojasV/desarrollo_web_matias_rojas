@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{base :: layout(~{::title}, ~{::main}, ~{::scripts})}">
+<head><title>Listado de Avistamientos - Aves en Chile</title></head>
+<body>
+<main>
+    <h2>Listado Nacional de Avistamientos</h2>
+    <p>Explora todos los registros aportados por nuestra comunidad.</p>
+    <div class="filtros-section">
+        <form th:action="@{/listAvistamientos}" method="get" id="form-filtros">
+            <div class="filtro-grupo">
+                <label for="ordenar-por">Ordenar por:</label>
+                <select id="ordenar-por" name="orden" onchange="this.form.submit()">
+                    <option value="fecha-desc" th:selected="${orden_actual == 'fecha-desc'}">Fecha (más reciente)</option>
+                    <option value="fecha-asc" th:selected="${orden_actual == 'fecha-asc'}">Fecha (más antigua)</option>
+                    <option value="lugar" th:selected="${orden_actual == 'lugar'}">Lugar (A-Z)</option>
+                </select>
+            </div>
+        </form>
+    </div>
+    <div class="lista-avistamientos lista-2-columnas">
+        <article class="tarjeta-ave" th:each="avistamiento : ${avistamientos.content}">
+            <img th:if="${!avistamiento.registros.isEmpty()}"
+                 th:src="@{/uploads/{archivo}(archivo=${avistamiento.registros[0].nombre_archivo})}"
+                 th:alt="|Foto de ${avistamiento.ave.nombre}|">
+            <div class="info-ave">
+                <h3><a th:href="@{/avistamiento/{id}(id=${avistamiento.id})}" th:text="${avistamiento.ave.nombre}"></a></h3>
+                <p><strong>Lugar:</strong> <span th:text="${avistamiento.lugar}"></span></p>
+                <p><strong>Fecha y Hora:</strong> <span th:text="${#temporals.format(avistamiento.fecha_hora, 'dd/MM/yyyy - HH:mm')}"></span> hrs</p>
+                <p><strong>Voluntario:</strong> <span th:text="${avistamiento.voluntario.nombre}"></span></p>
+                <p th:if="${avistamiento.descripcion != null and !avistamiento.descripcion.isBlank()}" th:text="${avistamiento.descripcion}"></p>
+            </div>
+        </article>
+        <p th:if="${avistamientos.empty}">Aún no hay avistamientos registrados en el sistema.</p>
+    </div>
+    <nav class="paginacion" aria-label="Paginación de avistamientos">
+        <a class="btn-paginacion" th:if="${avistamientos.hasPrevious()}"
+           th:href="@{/listAvistamientos(page=${avistamientos.number}, orden=${orden_actual})}">Anterior</a>
+        <button class="btn-paginacion" th:unless="${avistamientos.hasPrevious()}" disabled>Anterior</button>
+        <span class="paginacion-info" th:text="|Página ${avistamientos.number + 1} de ${avistamientos.totalPages == 0 ? 1 : avistamientos.totalPages}|"></span>
+        <a class="btn-paginacion" th:if="${avistamientos.hasNext()}"
+           th:href="@{/listAvistamientos(page=${avistamientos.number + 2}, orden=${orden_actual})}">Siguiente</a>
+        <button class="btn-paginacion" th:unless="${avistamientos.hasNext()}" disabled>Siguiente</button>
+    </nav>
+</main>
+<th:block th:fragment="scripts"></th:block>
+</body>
+</html>
