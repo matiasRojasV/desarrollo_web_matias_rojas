@@ -1,0 +1,4 @@
+enunciados/
+python/.venv/
+python/static/uploads/*
+python/__pycache__/
